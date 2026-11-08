@@ -6,17 +6,9 @@
 // Script classique (pas de module ES) : il se charge aussi quand la page est ouverte depuis un fichier.
 
 (function () {
-// ================= Réglages =================
-const CLE_STOCKAGE = "cbsh_visuel_projet";          // clé de localStorage
-const FORMAT = "cbsh-visuel";                       // marque de l'enveloppe de sauvegarde
-const VERSION_FORMAT = 1;                           // à incrémenter si la structure du projet change
-const CLES_SCENARIOS = ["A", "B"];                  // l'interface gère exactement ces deux scénarios
-const NOM_SCENARIO_MAX = 40;                        // longueur maximale du nom d'un scénario
-const TEXTE_MAX = 200;                              // longueur maximale d'un texte libre (nom du projet, précisions)
-const LIGNES_MAX = 500;                             // nombre maximal de lignes d'un projet importé
-const TAILLE_FICHIER_MAX = 1_000_000;               // octets : au-delà, un fichier importé est refusé
-const SEPARATEUR_CSV = ";";                         // Excel en français
-const DECIMALES_M2 = 2, DECIMALES_CBSH = 4;         // arrondis du CSV
+// ================= Réglages (voir config.js) =================
+const { CLE_STOCKAGE, FORMAT, VERSION_FORMAT, CLES_SCENARIOS, NOM_SCENARIO_MAX, TEXTE_MAX, ZONE_ID_MAX, LIGNES_MAX, TAILLE_FICHIER_MAX,
+        SEPARATEUR_CSV, DECIMALES_M2, DECIMALES_CBSH } = globalThis.CBShConfig;
 
 const { verifierDonnees, zoneDeLigne, SURFACE_MAX } = globalThis.CBShCalcul;
 
@@ -75,7 +67,10 @@ function validerProjet(brut, nomenclature, zonesDonnees) {
     lignes: [],
   };
   for (const l of lignes) {
-    if (!l || !estEntier(l.n) || !estEntier(l.typologie) || typeof l.surfaces !== "object" || l.surfaces === null) { erreurs.push("Ligne illisible (numéro, typologie ou surfaces)."); continue; }
+    if (!l || !estEntier(l.n) || !estEntier(l.typologie) || typeof l.surfaces !== "object" || l.surfaces === null) {
+      erreurs.push("Ligne illisible (numéro, typologie ou surfaces).");
+      continue;
+    }
     const ligne = {
       n: l.n,
       typologie: l.typologie,
@@ -83,7 +78,7 @@ function validerProjet(brut, nomenclature, zonesDonnees) {
       strates: l.strates === null || l.strates === undefined ? null : l.strates,
       surfaces: Object.fromEntries(CLES_SCENARIOS.map((c) => [c, l.surfaces[c]])),
     };
-    if (typeof l.zone === "string") ligne.zone = l.zone.slice(0, 60);
+    if (typeof l.zone === "string") ligne.zone = l.zone.slice(0, ZONE_ID_MAX);
     if (l.creee === true) ligne.creee = true;
     propre.lignes.push(ligne);
   }
@@ -157,7 +152,8 @@ function genererCsv(projet, nomenclature, resultats) {
     ["CBSh", ta.cbsh, tb.cbsh, DECIMALES_CBSH],
   ];
   for (const [libelle, va, vb, d] of synthese) sortie.push(ligneCsv([celluleTexte(libelle), celluleNombre(va, d), celluleNombre(vb, d), celluleNombre(vb - va, d)]));
-  sortie.push(ligneCsv([celluleTexte(`Façade végétalisée (hors CBSh, m²) — ${projet.facade_vegetalisee.precision}`), celluleNombre(projet.facade_vegetalisee.surface, DECIMALES_M2), "", ""]));
+  const facade = projet.facade_vegetalisee;
+  sortie.push(ligneCsv([celluleTexte(`Façade végétalisée (hors CBSh, m²) — ${facade.precision}`), celluleNombre(facade.surface, DECIMALES_M2), "", ""]));
   return sortie.join("\r\n") + "\r\n";
 }
 

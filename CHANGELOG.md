@@ -1,5 +1,13 @@
 # Changelog — Outil CBSh
 
+## 0.8.18 — lisibilité : réglages regroupés dans `js/config.js`, outils Python factorisés (aucun changement de comportement)
+- **`js/config.js`** (chargé en premier, expose `CBShConfig`, sans logique) : chemins des données, langue, clés et longueurs des scénarios, clé de la catégorie « toitures » (`CAT_TOITURE`, remplace huit « bat » écrits dans le code), tolérances et bornes de surface, seuils d'affichage, dimensions du plan et des étiquettes, délais, limites d'import, paramètres du CSV, libellé « éco-aménageables » et messages d'état (`TEXTES`). Importé par `calcul.js`, `projet_io.js` et `app.js`. Supprime les doublons (`NOM_SCENARIO_MAX`, clés « A » / « B »).
+- **Variables en tête de fichier** : `app.js` ne garde en tête que ses réglages propres (onglets, constantes dérivées) ; l'état de la popup, les éléments de la page et le seuil de l'aide sont regroupés en tête au lieu d'être déclarés en milieu de fichier. Nombres écrits dans le code remplacés par des constantes nommées (`ETIQ_PASSES_MAX`, `ETIQ_RAYON_REPERE`, `ZONE_ID_MAX`).
+- **Lignes longues** : toutes les lignes de plus de 200 caractères sont coupées (gabarits HTML coupés entre attributs, messages concaténés) ; la plus longue passe de 340 à moins de 200.
+- **Outils Python** : `outils/constantes.py` (chemins, palette, projection isométrique) partagé par `generer_zones.py`, `generer_image_aide.py` et `nomenclature_xlsx_vers_json.py` (qui n'écrit plus dans le dossier courant mais dans le dépôt). `generer_image_aide.py` écrit par défaut `assets/aide_cbsh_nomenclature.svg`. Sorties régénérées vérifiées identiques (`zones.json`, figure d'aide). `retoucher_axo.py` (usage unique, plus rejouable) supprimé ; l'historique reste dans git.
+- **README** : rubriques « Réglages » et « Régénérer la figure de l'aide », arborescence à jour.
+- Tests Node : 41 (2 nouveaux : cohérence de la configuration, absence de réglages dupliqués hors `config.js`).
+
 ## 0.8.17 — corrections issues de l'audit (sécurité, rapidité, cohérence)
 - **Zone d'une ligne** : `ligne.zone` (zone mémorisée à la création) prime désormais sur les listes de `zones.json`. Corrige le rattachement d'une ligne créée qui reprend le numéro d'une ligne supprimée (elle apparaissait dans l'ancienne zone). La règle est dans `calcul.js` (`zoneDeLigne`, pure et testée) et partagée par l'interface et l'import.
 - **Import / sauvegarde** : la surface de parcelle forcée doit être un nombre > 0 (un texte comme « 5 » était accepté) ; toute surface est bornée (`SURFACE_MAX` = 10⁹ m²) pour éviter les débordements numériques.

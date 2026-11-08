@@ -40,16 +40,26 @@ python outils/generer_zones.py
 ```
 (Contours en mètres projetés en isométrie, écrits dans `data/zones.json` ; aucune dépendance. Chaque zone a un type — `saisie`, `info`, `inerte`, `facade` — et, pour `saisie`, une catégorie, la liste de ses lignes et une ancre (repère des étiquettes). Toute ligne du projet doit appartenir à une zone.)
 
+## Régénérer la figure de l'aide
+```powershell
+python outils/generer_image_aide.py
+```
+(Écrit `assets/aide_cbsh_nomenclature.svg` aux couleurs de l'application ; aucune dépendance.)
+
+## Réglages
+Les valeurs que l'on peut vouloir modifier (chemins des données, seuils, dimensions du plan de l'Accueil, longueurs maximales, délais, messages d'état) sont dans `js/config.js`. La palette et les dimensions de la mise en page sont dans les variables de `:root` de `css/style.css`. Côté Python : `outils/constantes.py`.
+
 ## Arborescence
 ```
 index.html                     page unique (onglets Accueil / Saisie et détails / Aide)
 css/style.css                  palette et dimensions en variables, en tête
+js/config.js                   réglages et textes modifiables (chemins, seuils, dimensions du plan, messages) : à lire en premier
 js/calcul.js                   calcul CBSh (pur, testé)
 js/projet_io.js                sauvegarde locale, validation d'un projet importé, export CSV (pur, testé)
-js/app.js                      onglets, rendu, saisie, bascule A/B, étiquettes, zones cliquables, grisage, popups, menu Projet ; réglages en tête
+js/app.js                      onglets, rendu, saisie, bascule A/B, étiquettes, zones cliquables, grisage, popups, menu Projet
 data/nomenclature.json         nomenclature de septembre 2024
 data/projet_exemple.json       parcelle, scénarios A et B, lignes d'exemple
 data/zones.json                zones cliquables de l'axonométrie (généré)
 assets/                        illustrations (axo, coupe), logo et favicons, police Inter
-outils/                        conversion de la nomenclature, génération des zones, retouche de l'axo (0.8.10, usage unique), tests
+outils/                        conversion de la nomenclature, génération des zones et de la figure d'aide, constantes.py (chemins, palette, projection), tests
 ```

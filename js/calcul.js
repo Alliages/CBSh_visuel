@@ -7,9 +7,8 @@
 // Script classique (pas de module ES) : il se charge aussi quand la page est ouverte depuis un fichier.
 
 (function () {
-// ================= Réglages =================
-const TOLERANCE_SURFACE = 0.05;   // m² : dépassement toléré de la surface de la parcelle (forcée) par Σ des surfaces
-const SURFACE_MAX = 1e9;          // m² : borne haute d'une surface saisie ou importée (évite les débordements numériques)
+// ================= Réglages (voir config.js) =================
+const { TOLERANCE_SURFACE, SURFACE_MAX } = globalThis.CBShConfig;
 
 // ================= Nomenclature =================
 /** Index des typologies par identifiant. */
@@ -141,7 +140,10 @@ function verifierDonnees(nomenclature, projet, zonesDonnees = null) {
   if (erreurs.length === 0) {
     for (const { cle } of scenarios) {
       const forcee = scenarios.find((s) => s.cle === cle).surface_parcelle ?? null;
-      if (forcee !== null && !(typeof forcee === "number" && forcee > 0 && forcee <= SURFACE_MAX)) { erreurs.push(`Scénario ${cle} : surface de parcelle forcée invalide (${forcee})`); continue; }
+      if (forcee !== null && !(typeof forcee === "number" && forcee > 0 && forcee <= SURFACE_MAX)) {
+        erreurs.push(`Scénario ${cle} : surface de parcelle forcée invalide (${forcee})`);
+        continue;
+      }
       const r = calculerScenario(lignes, typologies, cle, forcee);
       if (!r.controle.conforme) erreurs.push(`Scénario ${cle} : Σ surfaces = ${r.surfaceTotale} m² > parcelle forcée ${forcee} m²`);
     }

@@ -1,23 +1,18 @@
 """Génère data/zones.json : zones cliquables de l'axonométrie (assets/axo.svg).
 
 Chaque zone est un ou plusieurs rectangles (en mètres, dans le plan du projet) projetés en isométrie.
-Projection de l'illustration (repère du SVG) : P(x, y, z) = (652 + (x − y)·cos 30°·15 ; 335 + (x + y)·7,5 − z·15)
-x vers la droite-bas, y vers la gauche-bas, z vers le haut. Source des contours : claude/PASSATION_CBSh.md § 3.
+Projection de l'illustration (repère du SVG) : voir outils/constantes.py.
+x vers la droite-bas, y vers la gauche-bas, z vers le haut. Source des contours : PASSATION_CBSh.md § 3 (documents du projet Claude).
 
 Usage (depuis la racine du dépôt) :  python outils/generer_zones.py
 """
 import json
-import math
 import re
-from pathlib import Path
+
+# AXO : le viewBox des zones est celui de l'illustration
+from constantes import CHEMIN_AXO as AXO, CHEMIN_ZONES as SORTIE, COS30, ECHELLE, ORIGINE_X, ORIGINE_Y, PAS_Y
 
 # ================= Réglages =================
-SORTIE = Path(__file__).resolve().parent.parent / "data" / "zones.json"
-AXO = Path(__file__).resolve().parent.parent / "assets" / "axo.svg"   # le viewBox des zones est celui de l'illustration
-ORIGINE_X, ORIGINE_Y = 652, 335          # image du point (0, 0, 0) dans le SVG
-ECHELLE = 15                              # px par mètre
-PAS_Y = 7.5                               # px par mètre sur les axes x et y (demi-hauteur du losange)
-COS30 = math.cos(math.radians(30))
 
 # Types de zone :
 #   saisie  : popup de saisie des lignes de la catégorie (champ « lignes » = lignes du tableau rattachées au départ)

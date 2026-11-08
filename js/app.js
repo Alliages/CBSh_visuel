@@ -1,4 +1,4 @@
-// CBSh visuel — interface (0.8.17) : onglets, chargement des données, rendu, saisie des surfaces du scénario actif (A ou B),
+// CBSh visuel — interface (0.8.18) : onglets, chargement des données, rendu, saisie des surfaces du scénario actif (A ou B),
 // bascule par les cartes de résultat, noms de scénarios modifiables, étiquettes cliquables de toutes les lignes (colonnes à gauche
 // et à droite de l'illustration), zones à 0 m² grisées, popup de zone sur 2 colonnes, suppression des lignes vides, aide,
 // sauvegarde locale, export / import JSON et export CSV. Le calcul est dans calcul.js, la validation et le CSV dans projet_io.js.
@@ -6,40 +6,20 @@
 // Dépend de calcul.js (chargé avant, expose CBShCalcul).
 const { indexerTypologies, calculerScenario, ecartScenarios, strateValide, verifierDonnees, zoneDeLigne: zoneDeLigneDans } = CBShCalcul;
 // Dépend aussi de projet_io.js (chargé avant, expose CBShProjet).
-const { CLE_STOCKAGE, serialiser, lireSauvegarde, validerProjet, lireFichierProjet, genererCsv, nomFichier } = CBShProjet;
+const { serialiser, lireSauvegarde, validerProjet, lireFichierProjet, genererCsv, nomFichier } = CBShProjet;
 
 // ================= Réglages =================
+// Les valeurs modifiables (chemins, seuils, dimensions du plan, textes d'état) sont dans config.js.
+const { CHEMIN_NOMENCLATURE, CHEMIN_PROJET, CHEMIN_ZONES, CHEMIN_AXO, LANGUE,
+        SCENARIO_BASE, SCENARIO_VARIANTE, SCENARIO_PAR_DEFAUT, NOM_SCENARIO_MAX, NOM_COURT_MAX, CAT_TOITURE,
+        ECHELLE_BARRE_KPI, SEUIL_NUMERO_MOSAIQUE, SEUIL_M2_MOSAIQUE, SEUIL_ECART_AFFICHE,
+        PLAN_LARGEUR, PLAN_HAUTEUR, PLAN_X_AXO, PLAN_LARGEUR_AXO, ETIQ_LARGEUR, ETIQ_HAUTEUR, ETIQ_ECART_AXO, ETIQ_MAX_PAR_COTE,
+        ETIQ_PAS_MAX, ETIQ_COUDE_DANS_AXO, ETIQ_DECALAGE_REPERE, ETIQ_RAYON_REPERE, ETIQ_PASSES_MAX, AIDE_SEUIL_SECTION,
+        CLE_STOCKAGE, DELAI_SAUVEGARDE_MS, DELAI_CONFIRMATION_MS, ERREURS_AFFICHEES, LIBELLE_ECO_AMENAGEABLES, TEXTES } = CBShConfig;
 const ONGLETS = ["accueil", "saisie", "aide"];             // identifiants : #onglet-<id> (bouton) et #panneau-<id> (contenu)
 const ONGLET_PAR_DEFAUT = "accueil";
-const CHEMIN_NOMENCLATURE = "data/nomenclature.json";
-const CHEMIN_PROJET = "data/projet_exemple.json";
-const CHEMIN_ZONES = "data/zones.json";            // zones cliquables de l'axonométrie (généré par outils/generer_zones.py)
-const LANGUE = "fr-FR";
-const LIBELLE_ECO_AMENAGEABLES = "éco-aménageables";   // texte « m² éco-aménageables » (cartes de l'Accueil)
-const CHEMIN_AXO = "assets/axo.svg";               // illustration (copie en couleur découpée sur la zone sélectionnée)
-const SCENARIO_BASE = "A";                         // le gain se lit « variante / base »
-const SCENARIO_VARIANTE = "B";
-const SCENARIO_PAR_DEFAUT = "A";                   // scénario actif au chargement (seul modifiable ; l'autre est en lecture seule)
-const ECHELLE_BARRE_KPI = 250;                     // m² éco correspondant à une barre pleine (cartes de l'Accueil)
-const SEUIL_NUMERO_MOSAIQUE = 0.027;               // part de la parcelle à partir de laquelle un bloc affiche son n°
-const SEUIL_M2_MOSAIQUE = 0.087;                   // … et sa surface en m²
-const SEUIL_ECART_AFFICHE = 0.05;                  // m² éco : en dessous, l'écart d'une ligne n'est pas affiché
-// Plan de l'Accueil : scène en unités de conception (voir .plan-stage dans style.css) et étiquettes des lignes
-const PLAN_LARGEUR = 1370, PLAN_HAUTEUR = 703;      // scène entière : colonne de légendes | axonométrie | colonne de légendes
-const PLAN_X_AXO = 300, PLAN_LARGEUR_AXO = 770;     // position et largeur de l'axonométrie dans la scène
-const ETIQ_LARGEUR = 280, ETIQ_HAUTEUR = 50;        // étiquette
-const ETIQ_ECART_AXO = 20;                          // espace entre l'axonométrie et chaque colonne d'étiquettes
 const ETIQ_X_DROITE = PLAN_X_AXO + PLAN_LARGEUR_AXO + ETIQ_ECART_AXO;   // abscisse de la colonne de droite (1 090)
-const ETIQ_MAX_PAR_COTE = 8;                        // au-delà, les étiquettes les plus proches du centre passent de l'autre côté
-const ETIQ_PAS_MAX = 66;                            // écart maximal entre deux étiquettes (le pas se resserre s'il y en a beaucoup)
-const ETIQ_COUDE_DANS_AXO = 20;                     // le coude des traits de repère est à cette distance du bord de l'axonométrie
-const ETIQ_DECALAGE_REPERE = 10;                    // décalage vertical entre deux repères d'une même zone
-const NOM_SCENARIO_MAX = 40;                        // longueur maximale du nom d'un scénario
-const ERREURS_AFFICHEES = 3;                        // import refusé : nombre de motifs cités dans le message
-const DELAI_CONFIRMATION_MS = 5000;                 // « Revenir à l'exemple » : délai pour confirmer
-const DELAI_SAUVEGARDE_MS = 400;                    // sauvegarde locale différée après la dernière modification (évite une écriture par frappe)
-const NOM_COURT_MAX = 14;                           // nom abrégé (sélecteur de la coupe) : tronqué au-delà
-const NBSP = " ";
+const NBSP = " ";
 
 // ================= Formats =================
 const nf0 = new Intl.NumberFormat(LANGUE, { maximumFractionDigits: 0, useGrouping: "always" });   // « 1 000 » (sans « always », le français écrit « 1000 »)
@@ -67,11 +47,15 @@ let scenarioActif = SCENARIO_PAR_DEFAUT;   // scénario modifiable (bascule A / 
 let sauvegardeActive = false;  // vrai dès la première modification (ou après une restauration) : avant, rien n'est écrit dans le navigateur
 let minuteurSauvegarde = null; // sauvegarde différée en attente (null = aucune)
 let cleGrisage = null;         // zones actuellement grisées (clé) : le calque n'est refait que si elle change
+let declencheur = null;        // étiquette qui a ouvert la popup (elle est redessinée à la validation : le focus lui est rendu par son n° de ligne)
+let brouillon = null;          // saisie en cours dans la popup : { zone, categorie, lignes: [lignes brouillon] } (rien n'est appliqué avant « Valider »)
 
-// ================= Onglets =================
+// Éléments de la page (le script est chargé en fin de <body> : ils existent déjà)
 const boutons = ONGLETS.map((id) => document.getElementById(`onglet-${id}`));
 const panneaux = ONGLETS.map((id) => document.getElementById(`panneau-${id}`));
+const popup = document.getElementById("popup-zone");
 
+// ================= Onglets =================
 /** Affiche l'onglet demandé ; `majUrl` met à jour le fragment d'URL (#accueil / #saisie / #aide). */
 function afficher(id, majUrl = true) {
   if (!ONGLETS.includes(id)) id = ONGLET_PAR_DEFAUT;
@@ -103,8 +87,6 @@ function initialiserOnglets() {
 }
 
 // ================= Onglet Aide =================
-const AIDE_SEUIL_SECTION = 0.3;                        // une section est « courante » quand son haut a passé ce rapport de la hauteur de l'écran
-
 /** Sommaire de l'aide : un clic fait défiler jusqu'à la section ; la section courante (celle qui a franchi le haut de l'écran,
  *  ou la dernière quand on est en bas de page) est repérée dans le sommaire. */
 function initialiserAide() {
@@ -157,7 +139,8 @@ function htmlBandeau(cat) {
 function htmlCelluleM2(cle, l, t) {
   const classe = `c-${cle.toLowerCase()}-m2`;
   if (cle !== scenarioActif) return `<div class="${classe}" role="cell" data-sortie="m2-${cle}-${l.n}"></div>`;
-  return `<div class="${classe}" role="cell"><input type="number" class="champ" min="0" step="any" inputmode="decimal" placeholder="—" data-ligne="${l.n}" aria-label="Surface en m², scénario ${cle}, ligne ${l.n} : ${esc(t.libelle)}"></div>`;
+  return `<div class="${classe}" role="cell"><input type="number" class="champ" min="0" step="any" inputmode="decimal" placeholder="—"
+    data-ligne="${l.n}" aria-label="Surface en m², scénario ${cle}, ligne ${l.n} : ${esc(t.libelle)}"></div>`;
 }
 
 function htmlLigne(l) {
@@ -171,7 +154,8 @@ function htmlLigne(l) {
   ${htmlCelluleM2("B", l, t)}
   <div class="c-b-eco" role="cell" data-sortie="eco-B-${l.n}"></div>
   <div class="c-ecart" role="cell" data-sortie="ecart-${l.n}"></div>
-  <div class="c-sup" role="cell"><button type="button" class="btn-retirer btn-retirer--tableau" data-supprimer="${l.n}" hidden title="Supprimer cette ligne (vide dans les deux scénarios)" aria-label="Supprimer la ligne ${l.n} (vide dans les deux scénarios)">✕</button></div>
+  <div class="c-sup" role="cell"><button type="button" class="btn-retirer btn-retirer--tableau" data-supprimer="${l.n}" hidden
+    title="Supprimer cette ligne (vide dans les deux scénarios)" aria-label="Supprimer la ligne ${l.n} (vide dans les deux scénarios)">✕</button></div>
 </div>`;
 }
 
@@ -187,7 +171,8 @@ function htmlMosaiqueLigne(cle, res) {
     let contenu = "";
     if (part > SEUIL_NUMERO_MOSAIQUE) contenu += `<span class="seg-n">${l.n}</span>`;
     if (part > SEUIL_M2_MOSAIQUE) contenu += `<span class="seg-m2">${entier(surface)}${NBSP}m²</span>`;
-    blocs.push(`<span class="seg-bloc ${classeCat(t.categorie)}${t.coef === 0 ? " seg--zero" : ""}" style="--part:${(part * 100).toFixed(3)}%" title="n° ${l.n} · ${esc(t.libelle)} · ${entier(surface)} m²">${contenu}</span>`);
+    blocs.push(`<span class="seg-bloc ${classeCat(t.categorie)}${t.coef === 0 ? " seg--zero" : ""}" style="--part:${(part * 100).toFixed(3)}%"
+      title="n° ${l.n} · ${esc(t.libelle)} · ${entier(surface)} m²">${contenu}</span>`);
     if (eco > 0) segmentsEco.push(`<span class="${classeCat(t.categorie)}" style="flex:0 0 ${(eco / res.ecoTotal * 100).toFixed(3)}%"></span>`);
   }
   const nom = projet.scenarios.find((s) => s.cle === cle).nom;
@@ -197,7 +182,8 @@ function htmlMosaiqueLigne(cle, res) {
   ${lettre}
   <div class="mosa-barres">
     <div class="barre-surf" role="img" aria-label="Scénario ${cle} (${esc(nom)}) : répartition des ${entier(parcelle)} m² de la parcelle">${blocs.join("")}</div>
-    <div class="barre-eco" style="--part-eco:${partEco.toFixed(3)}%"><div class="eco-remplissage">${segmentsEco.join("")}</div><span class="pastille-cbsh">CBSh ${cbshTxt(res.cbsh)}</span></div>
+    <div class="barre-eco" style="--part-eco:${partEco.toFixed(3)}%">
+      <div class="eco-remplissage">${segmentsEco.join("")}</div><span class="pastille-cbsh">CBSh ${cbshTxt(res.cbsh)}</span></div>
   </div>
   <span class="mosa-total">${entier(parcelle)}${NBSP}m²</span>
 </div>`;
@@ -213,7 +199,8 @@ function rendreStructure() {
       carte.querySelector(".scen-nom").textContent = `Scénario ${cle}`;
       // Le nom est un bouton : un clic le remplace par un champ de saisie (renommage sur place)
       carte.querySelector(".scen-sous").innerHTML = `<button type="button" class="nom-edit" data-renommer="${cle}" title="Renommer le scénario">`
-        + `<span class="nom-texte"></span><svg class="nom-crayon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg></button>`;
+        + `<span class="nom-texte"></span><svg class="nom-crayon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg></button>`;
     }
   }
   majNomsScenarios();
@@ -410,7 +397,7 @@ function ordonnerEtiquettes(reperes, yDe, xCoude) {
     return n;
   };
   let meilleur = croisements();
-  for (let passe = 0, ameliore = true; ameliore && passe < 50; passe++) {
+  for (let passe = 0, ameliore = true; ameliore && passe < ETIQ_PASSES_MAX; passe++) {
     ameliore = false;
     for (let i = 0; i < reperes.length; i++) {
       for (let j = i + 1; j < reperes.length; j++) {
@@ -469,7 +456,7 @@ function rendreEtiquettes() {
         + `<span class="etiq-n">${l.n}</span><span class="etiq-nom">${esc(nomEtiquette(l, t))}</span>`
         + `<span class="etiq-calc">${entier(surface)}${NBSP}m² × ${nfCoef.format(coef)}</span><span class="etiq-eco">${dec1(eco)}${NBSP}éco</span></button>`;
       liens += `<g class="${zero ? "lien--zero" : ""}"><polyline points="${xBord},${yEtiq.toFixed(1)} ${xCoude},${yEtiq.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}"/>`
-        + `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5"/></g>`;
+        + `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${ETIQ_RAYON_REPERE}"/></g>`;
     });
   };
   colonne(gauche, 0, ETIQ_LARGEUR, PLAN_X_AXO + ETIQ_COUDE_DANS_AXO);
@@ -624,10 +611,6 @@ function initialiserSaisie() {
 }
 
 // ================= Zones cliquables et popups =================
-const popup = document.getElementById("popup-zone");
-let declencheur = null;      // étiquette qui a ouvert la popup (elle est redessinée à la validation : le focus lui est rendu par son n° de ligne)
-let brouillon = null;        // saisie en cours dans la popup : { zone, categorie, lignes: [lignes brouillon] } (rien n'est appliqué avant « Valider »)
-
 const ligneDe = (n) => projet.lignes.find((l) => l.n === n);
 const libelleCategorie = (cle) => nomenclature.categories.find((c) => c.cle === cle).libelle;
 const typologieDefaut = (cat) => nomenclature.typologies.find((t) => t.categorie === cat && t.defaut);
@@ -645,7 +628,7 @@ const zonesDeSaisie = (categorie) => zonesDonnees.zones.filter((z) => z.type ===
 /** Toitures : une « classe » par épaisseur de substrat (libellé de typologie), avec ses variantes de strates. */
 function classesToiture() {
   const classes = new Map();
-  for (const t of nomenclature.typologies.filter((x) => x.categorie === "bat")) {
+  for (const t of nomenclature.typologies.filter((x) => x.categorie === CAT_TOITURE)) {
     if (!classes.has(t.libelle)) {
       classes.set(t.libelle, {
         libelle: t.libelle,
@@ -662,8 +645,8 @@ const stratesPossibles = (classe) => new Set(classe.typos.flatMap((t) => t.strat
 
 /** Typologie correspondant à une ligne du brouillon (null si la combinaison n'existe pas dans la nomenclature). */
 function typologieDe(d) {
-  if (brouillon.categorie !== "bat") return typologies.get(d.typologie);
-  if (d.inconnu) return typologieDefaut("bat");
+  if (brouillon.categorie !== CAT_TOITURE) return typologies.get(d.typologie);
+  if (d.inconnu) return typologieDefaut(CAT_TOITURE);
   const classe = classesToiture().find((c) => c.libelle === d.classe);
   return classe.typos.find((t) => strateValide(t, t.strates ? d.strates : null)) ?? null;
 }
@@ -744,13 +727,14 @@ function htmlBandeauPopup() {
 
 /** Choix de la typologie d'une ligne : épaisseur + strates pour les toitures, liste déroulante pour les autres catégories. */
 function htmlChoixLigne(categorie) {
-  if (categorie === "bat") {
+  if (categorie === CAT_TOITURE) {
     const classes = classesToiture().map((c) => `<option value="${esc(c.libelle)}">${esc(c.nom)} · ${esc(c.detail)}</option>`).join("");
     const strates = nomenclature.strates.map((s) => `<label class="choix choix--court"><input type="checkbox" name="strate" value="${s.cle}">
       <span class="choix-nom">${esc(s.libelle)}</span></label>`).join("");
-    const defaut = typologieDefaut("bat");
+    const defaut = typologieDefaut(CAT_TOITURE);
     return `<label class="champ-libelle">Épaisseur de substrat<select name="classe" class="select-popup">${classes}</select></label>
-      <fieldset class="choix-groupe"><legend>Strates <span class="legende-note">arbustes et arbres : ≥ 20 % de la surface</span></legend><div class="choix-ligne">${strates}</div></fieldset>
+      <fieldset class="choix-groupe"><legend>Strates <span class="legende-note">arbustes et arbres : ≥ 20 % de la surface</span></legend>
+        <div class="choix-ligne">${strates}</div></fieldset>
       <label class="choix choix--inconnu"><input type="checkbox" name="inconnu"><span class="choix-nom">Je ne sais pas</span>
       <span class="choix-cond">coefficient par défaut · ${esc(defaut.libelle)} · ${esc(defaut.condition)}</span></label>`;
   }
@@ -766,17 +750,21 @@ function htmlLignePopup(d, i) {
     const autre = d.ligne.surfaces[autreScenario()] ?? 0;
     const nomAutre = projet.scenarios.find((s) => s.cle === autreScenario()).nom;
     const message = autre > 0
-      ? `${titre} : surface remise à 0 en « ${esc(scenarioCourant().nom)} » à la validation. Elle reste dans « ${esc(nomAutre)} » (${entier(autre)}${NBSP}m²) : remettez-la à 0 là aussi pour retirer la ligne.`
+      ? `${titre} : surface remise à 0 en « ${esc(scenarioCourant().nom)} » à la validation. `
+        + `Elle reste dans « ${esc(nomAutre)} » (${entier(autre)}${NBSP}m²) : remettez-la à 0 là aussi pour retirer la ligne.`
       : `${titre} : supprimée à la validation (0${NBSP}m² dans les deux scénarios).`;
     return `<section class="ligne-popup ligne-popup--supprimee" data-i="${i}"><p>${message}</p>
       <button type="button" class="btn" data-action="retablir-ligne">Rétablir</button></section>`;
   }
   const ref = d.ligne ? `<span class="popup-ref">Scénario ${autreScenario()} (lecture seule) : ${entier(d.ligne.surfaces[autreScenario()] ?? 0)}${NBSP}m²</span>` : "";
   return `<section class="ligne-popup" data-i="${i}">
-    <div class="ligne-popup-tete"><b>${titre}</b><button type="button" class="btn-retirer" data-action="supprimer-ligne" title="Mettre à 0 m² dans ce scénario. La ligne est supprimée quand elle vaut 0 dans les deux." aria-label="Mettre cette ligne à 0 m² dans ce scénario (supprimée si elle vaut 0 dans les deux)">✕</button></div>
+    <div class="ligne-popup-tete"><b>${titre}</b><button type="button" class="btn-retirer" data-action="supprimer-ligne"
+      title="Mettre à 0 m² dans ce scénario. La ligne est supprimée quand elle vaut 0 dans les deux."
+      aria-label="Mettre cette ligne à 0 m² dans ce scénario (supprimée si elle vaut 0 dans les deux)">✕</button></div>
     <div class="ligne-popup-g">${htmlChoixLigne(brouillon.categorie)}</div>
     <div class="ligne-popup-d">
-      <div class="popup-surface"><label>Surface <input type="number" class="champ champ--popup" min="0" step="any" inputmode="decimal" value="${d.surface || ""}" placeholder="0"></label><span>m²</span>${ref}</div>
+      <div class="popup-surface"><label>Surface <input type="number" class="champ champ--popup" min="0" step="any" inputmode="decimal"
+        value="${d.surface || ""}" placeholder="0"></label><span>m²</span>${ref}</div>
       <div class="popup-resultat"></div>
     </div>
   </section>`;
@@ -817,10 +805,12 @@ function htmlPopupFacade() {
     <h2 id="popup-titre" class="popup-titre"><span class="info" aria-hidden="true">i</span>Façade végétalisée</h2>
     <p class="popup-sous">${esc(f.precision)}</p>
     <p class="popup-alerte">Non comptabilisée dans le CBSh</p>
-    <p class="popup-note">Le CBSh repose sur les surfaces en projection horizontale (sol et toitures) : une façade n'entre pas dans le calcul. Elle peut toutefois être mentionnée dans le rapport.</p>
+    <p class="popup-note">Le CBSh repose sur les surfaces en projection horizontale (sol et toitures) : une façade n'entre pas dans le calcul.
+      Elle peut toutefois être mentionnée dans le rapport.</p>
     <div class="popup-surface"><label for="popup-facade-surface">Surface indicative</label>
       <input type="number" class="champ champ--popup" id="popup-facade-surface" min="0" step="any" inputmode="decimal" value="${f.surface || ""}" placeholder="0"><span>m²</span></div>
-    <label class="choix choix--inconnu"><input type="checkbox" id="popup-facade-mention"${f.mentionnee ? " checked" : ""}><span class="choix-nom">Mentionner dans le rapport (hors CBSh)</span></label>
+    <label class="choix choix--inconnu"><input type="checkbox" id="popup-facade-mention"${f.mentionnee ? " checked" : ""}>
+      <span class="choix-nom">Mentionner dans le rapport (hors CBSh)</span></label>
     <div class="popup-resultat"><p class="res-calc">Contribution au CBSh : <b>0${NBSP}m² éco</b></p></div>
   </div>
   <footer class="popup-pied"><span class="popup-pied-espace"></span><button type="button" class="btn btn--plein" data-action="annuler">Fermer</button></footer>`;
@@ -858,7 +848,7 @@ function majLignePopup(i) {
   const d = brouillon.lignes[i];
   const carte = popup.querySelector(`.ligne-popup[data-i="${i}"]`);
   if (d.supprimee) return;
-  if (brouillon.categorie === "bat") {
+  if (brouillon.categorie === CAT_TOITURE) {
     const classe = classesToiture().find((c) => c.libelle === d.classe);
     const possibles = stratesPossibles(classe);
     const select = carte.querySelector('select[name="classe"]');
@@ -876,7 +866,8 @@ function majLignePopup(i) {
   resultat.classList.toggle("popup-resultat--alerte", !t);
   resultat.innerHTML = t
     ? `<p class="res-typo"><b>${esc(t.libelle)}</b> · ${esc(t.condition)}</p>
-       <p class="res-calc">Coef. <b>${nfCoef.format(t.coef)}</b>${d.inconnu ? " (par défaut)" : ""} × ${entier(d.surface)}${NBSP}m² = <b>${dec1(t.coef * d.surface)}${NBSP}m² éco</b></p>`
+       <p class="res-calc">Coef. <b>${nfCoef.format(t.coef)}</b>${d.inconnu ? " (par défaut)" : ""} × ${entier(d.surface)}${NBSP}m²
+         = <b>${dec1(t.coef * d.surface)}${NBSP}m² éco</b></p>`
     : `<p class="res-typo">Combinaison de strates absente de la nomenclature pour cette épaisseur.</p>`;
 }
 
@@ -961,10 +952,10 @@ function validerPopup() {
       if (ligne) ligne.surfaces[scenarioActif] = 0;                      // la surface repart à 0 dans ce scénario seulement
       continue;
     }
-    const stratesChoisies = brouillon.categorie === "bat" && !d.inconnu && t.strates ? [...d.strates] : stratesParDefaut(t);
+    const stratesChoisies = brouillon.categorie === CAT_TOITURE && !d.inconnu && t.strates ? [...d.strates] : stratesParDefaut(t);
     if (ligne) {
       if (t.id !== ligne.typologie) { ligne.precision = null; ligne.strates = stratesChoisies; }   // l'intitulé du tableau reprend la condition
-      else if (brouillon.categorie === "bat") ligne.strates = stratesChoisies;
+      else if (brouillon.categorie === CAT_TOITURE) ligne.strates = stratesChoisies;
       ligne.typologie = t.id;
       ligne.surfaces[scenarioActif] = d.surface;
     } else if (d.surface > 0) {                                           // nouvelle ligne : créée seulement si elle a une surface
@@ -1037,7 +1028,11 @@ function initialiserPopup() {
     if (action === "annuler") { popup.close(); return; }
     if (!brouillon) return;
     const i = indexCarte(e.target);
-    if (action === "ajouter-ligne") { brouillon.lignes.push(nouvelleLigneBrouillon(brouillon.categorie)); rendreLignesPopup(); popup.querySelector(".ligne-popup:last-of-type .champ--popup")?.focus(); }
+    if (action === "ajouter-ligne") {
+      brouillon.lignes.push(nouvelleLigneBrouillon(brouillon.categorie));
+      rendreLignesPopup();
+      popup.querySelector(".ligne-popup:last-of-type .champ--popup")?.focus();
+    }
     else if (action === "supprimer-ligne") {
       if (brouillon.lignes[i].ligne) brouillon.lignes[i].supprimee = true; else brouillon.lignes.splice(i, 1);
       rendreLignesPopup();
@@ -1073,9 +1068,9 @@ function sauvegarder(origine = "auto") {
   if (!sauvegardeActive) return;
   try {
     localStorage.setItem(CLE_STOCKAGE, serialiser(projet, scenarioActif, origine));
-    afficherEtatSauvegarde(`Enregistré dans ce navigateur à ${new Date().toLocaleTimeString(LANGUE, { hour: "2-digit", minute: "2-digit" })}.`);
+    afficherEtatSauvegarde(TEXTES.sauvegardeFaite(new Date().toLocaleTimeString(LANGUE, { hour: "2-digit", minute: "2-digit" })));
   } catch (erreur) {                                       // stockage refusé (navigation privée stricte, quota, politique du navigateur)
-    afficherEtatSauvegarde("Enregistrement dans ce navigateur impossible : pensez à exporter le projet (.json).");
+    afficherEtatSauvegarde(TEXTES.sauvegardeImpossible);
     console.warn("Sauvegarde locale impossible :", erreur);
   }
 }
@@ -1115,14 +1110,14 @@ function restaurerSauvegarde() {
   const { projet: propre, erreurs } = sauvegarde ? validerProjet(sauvegarde.projet, nomenclature, zonesDonnees) : { projet: null, erreurs: ["enveloppe illisible"] };
   if (!propre) {
     console.warn("Sauvegarde locale ignorée :", erreurs);
-    return { texte: "La sauvegarde de ce navigateur n'a pas pu être relue : l'exemple est affiché. Elle sera remplacée à votre prochaine modification.", erreur: true };
+    return { texte: TEXTES.restaurationIllisible, erreur: true };
   }
   projet = propre;
   if (projet.scenarios.some((s) => s.cle === sauvegarde.scenarioActif)) scenarioActif = sauvegarde.scenarioActif;
   sauvegardeActive = true;
   const date = new Date(sauvegarde.enregistre).toLocaleString(LANGUE, { dateStyle: "short", timeStyle: "short" });
-  const debut = sauvegarde.origine === "import" ? "Projet importé" : "Projet restauré depuis la sauvegarde de ce navigateur";
-  return { texte: `${debut} (${date}). Menu « Projet » → « Revenir à l'exemple » pour repartir de l'exemple.`, erreur: false };
+  const debut = sauvegarde.origine === "import" ? TEXTES.debutRestaurationImport : TEXTES.debutRestaurationAuto;
+  return { texte: TEXTES.restaurationFaite(debut, date), erreur: false };
 }
 
 /** Télécharge un texte comme fichier. */
@@ -1138,16 +1133,16 @@ function telecharger(texte, nom, type) {
 /** Importe un fichier .json : s'il est valide, il est enregistré dans le navigateur puis la page est rechargée (tout est redessiné proprement). */
 async function importerProjet(fichier) {
   let texte;
-  try { texte = await fichier.text(); } catch { afficherMessage("Import impossible : le fichier n'a pas pu être lu.", true); return; }
+  try { texte = await fichier.text(); } catch { afficherMessage(TEXTES.importIllisible, true); return; }
   const { projet: propre, erreurs } = lireFichierProjet(texte, nomenclature, zonesDonnees);
   if (!propre) {
-    const motifs = erreurs.slice(0, ERREURS_AFFICHEES).join(" ") + (erreurs.length > ERREURS_AFFICHEES ? ` (+ ${erreurs.length - ERREURS_AFFICHEES} autres)` : "");
-    afficherMessage(`Import refusé : ${motifs}`, true);
+    const motifs = erreurs.slice(0, ERREURS_AFFICHEES).join(" ") + (erreurs.length > ERREURS_AFFICHEES ? TEXTES.importAutres(erreurs.length - ERREURS_AFFICHEES) : "");
+    afficherMessage(TEXTES.importRefuse(motifs), true);
     return;
   }
   abandonnerSauvegarde();
   try { localStorage.setItem(CLE_STOCKAGE, serialiser(propre, scenarioActif, "import")); }
-  catch { afficherMessage("Import impossible : ce navigateur n'autorise pas l'enregistrement local.", true); return; }
+  catch { afficherMessage(TEXTES.importStockage, true); return; }
   location.reload();
 }
 
@@ -1220,9 +1215,7 @@ async function demarrer() {
   } catch (erreur) {
     const bloc = document.getElementById("erreur-donnees");
     bloc.hidden = false;
-    bloc.textContent = location.protocol === "file:"
-      ? "Page ouverte depuis un fichier : les données ne peuvent pas être chargées. À la racine du dépôt, lancez « python -m http.server 8000 » puis ouvrez http://localhost:8000/."
-      : "Impossible de charger les données (nomenclature ou projet). Vérifiez le dossier data/ et rechargez la page.";
+    bloc.textContent = location.protocol === "file:" ? TEXTES.erreurFichier : TEXTES.erreurDonnees;
     console.error(erreur);
     return;
   }

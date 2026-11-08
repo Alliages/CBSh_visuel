@@ -2,6 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
+await import("../../js/config.js");                         // expose globalThis.CBShConfig (0.8.18)
 await import("../../js/calcul.js");                       // script classique : expose globalThis.CBShCalcul
 await import("../../js/projet_io.js");                    // expose globalThis.CBShProjet (0.8.16)
 const { indexerTypologies, calculerScenario, ecartScenarios, strateValide, verifierDonnees } = globalThis.CBShCalcul;
@@ -255,7 +256,7 @@ test("aide : l'image de la nomenclature existe, et l'onglet et ses sections sont
 });
 
 test("scénario affiché au chargement : A", () => {
-  assert.match(readFileSync(new URL("../../js/app.js", import.meta.url), "utf-8"), /const SCENARIO_PAR_DEFAUT = "A";/);
+  assert.equal(globalThis.CBShConfig.SCENARIO_PAR_DEFAUT, "A");
 });
 
 // ================= Sauvegarde, import et export (0.8.16) =================
@@ -370,7 +371,7 @@ test("index.html : menu Projet, bouton CSV actif, scripts dans l'ordre", () => {
   assert.match(html, /id="bouton-projet"[^>]*aria-controls="menu-projet"/);
   assert.match(html, /id="bouton-csv"/);
   assert.doesNotMatch(html, /class="bouton-export" disabled/);
-  assert.ok(html.indexOf("js/calcul.js") < html.indexOf("js/projet_io.js") && html.indexOf("js/projet_io.js") < html.indexOf("js/app.js"));
+  assert.ok(html.indexOf("js/config.js") < html.indexOf("js/calcul.js") && html.indexOf("js/calcul.js") < html.indexOf("js/projet_io.js") && html.indexOf("js/projet_io.js") < html.indexOf("js/app.js"));
   assert.equal(html.match(/<div[\s>]/g).length, html.match(/<\/div>/g).length);
 });
 
@@ -416,4 +417,24 @@ test("index.html : politique de sécurité de contenu présente avant les script
   assert.match(html, /script-src 'self'/);
   assert.doesNotMatch(html, /<script(?![^>]*\ssrc=)[^>]*>/);
   assert.doesNotMatch(html, /\son(click|error|load)=/);
+});
+
+test("config : réglages cohérents (scénarios, plan, textes) et lus par les scripts", () => {
+  const c = globalThis.CBShConfig;
+  assert.deepEqual(c.CLES_SCENARIOS, [c.SCENARIO_BASE, c.SCENARIO_VARIANTE]);
+  assert.ok(c.CLES_SCENARIOS.includes(c.SCENARIO_PAR_DEFAUT));
+  assert.equal(c.TOLERANCE_SURFACE, globalThis.CBShCalcul.TOLERANCE_SURFACE);
+  assert.ok(Object.isFrozen(c));
+  assert.ok(nomenclature.categories.some((cat) => cat.cle === c.CAT_TOITURE));
+  assert.ok(c.PLAN_X_AXO + c.PLAN_LARGEUR_AXO + c.ETIQ_ECART_AXO + c.ETIQ_LARGEUR <= c.PLAN_LARGEUR);          // la colonne de droite tient dans la scène
+  for (const chemin of [c.CHEMIN_NOMENCLATURE, c.CHEMIN_PROJET, c.CHEMIN_ZONES, c.CHEMIN_AXO]) assert.ok(existsSync(new URL(`../../${chemin}`, import.meta.url)), chemin);
+  assert.match(c.TEXTES.importRefuse("x"), /x/);
+});
+
+test("lisibilité : aucun réglage dupliqué hors config.js (scénarios, bornes, clé de stockage)", () => {
+  for (const f of ["app.js", "calcul.js", "projet_io.js"]) {
+    const src = readFileSync(new URL(`../../js/${f}`, import.meta.url), "utf-8");
+    assert.doesNotMatch(src, /^const (NOM_SCENARIO_MAX|CLES_SCENARIOS|CLE_STOCKAGE|TOLERANCE_SURFACE|SURFACE_MAX|LIGNES_MAX) =/m, f);
+    assert.doesNotMatch(src, /"bat"/, `${f} : utiliser CAT_TOITURE`);
+  }
 });

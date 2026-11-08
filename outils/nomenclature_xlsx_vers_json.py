@@ -12,12 +12,12 @@ Les identifiants (ID) de la grille d'origine sont cassés (#REF!) : ils sont att
 import json
 import re
 import sys
-from pathlib import Path
 
 import openpyxl
 
+from constantes import CHEMIN_NOMENCLATURE as CHEMIN_JSON
+
 # ================= Réglages =================
-CHEMIN_JSON = Path("data/nomenclature.json")
 VERSION_GRILLE = "septembre 2024"
 TITRE_GRILLE = "Nomenclature du Coefficient de Biotope Surfacique harmonisé (CBSh)"
 MENTION = ("Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, "

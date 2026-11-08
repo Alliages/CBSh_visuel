@@ -1,9 +1,11 @@
 # Génère assets/aide_cbsh_nomenclature.svg : nomenclature CBSh aux couleurs de l'application.
-# Usage : python generer_image_aide.py <fichier_sortie.svg>
+# Usage (depuis la racine du dépôt) : python outils/generer_image_aide.py [fichier_sortie.svg]
+# Sans argument, écrit assets/aide_cbsh_nomenclature.svg. Aucune dépendance.
 import sys
 
+from constantes import BRONZE, CELADON, CHEMIN_AIDE_SVG, FERN, GOLD, JET
+
 # ===== Réglages =====
-FERN, CELADON, JET, GOLD, BRONZE = "#588157", "#9bceb1", "#2a3439", "#e6be60", "#d8a48f"
 GRIS = "#5b6569"
 LARGEUR, HAUTEUR = 1280, 780
 X_DEPART, LARG_COL, ECART = 50, 220, 20
@@ -108,4 +110,5 @@ svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {LARGEUR} {HAUTEUR
        f'<text x="{LARGEUR / 2}" y="62" text-anchor="middle" font-size="32" font-weight="800" fill="{JET}">Coefficient de Biotope Surfacique harmonisé (CBSh)</text>']
 svg += [colonne(i, c) for i, c in enumerate(COLONNES)]
 svg.append("</svg>")
-open(sys.argv[1], "w", encoding="utf-8").write("\n".join(svg))
+sortie = sys.argv[1] if len(sys.argv) > 1 else CHEMIN_AIDE_SVG
+open(sortie, "w", encoding="utf-8").write("\n".join(svg))
