@@ -9,14 +9,11 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [x] Représentation symbolique : une zone = une grande catégorie (la noue = toute la catégorie « eau »)
 - [x] Logo « Pousse » et favicons
 
-## Synthèse (état à la 0.8.16)
-**Fonctionne** : calcul CBSh de deux scénarios (A, B) avec comparaison ; Accueil (axonométrie cliquable, légendes à gauche et à droite, zones à 0 m² grisées, cartes de bascule) ; saisie par popups de zone et par tableau (ajout, suppression des lignes vides) ; noms de scénarios modifiables ; onglet Aide intégré ; sauvegarde automatique dans le navigateur ; export / import JSON ; export CSV pour Excel. 33 tests Node (calcul, données, validation, CSV).
-**Reste pour la 0.9** (proposition, à valider) :
-- calcul vérifié sur un cas de référence (point de sortie de la 0.9) ;
-- données : coefficients par défaut à confirmer avec le GT 7, texte de la mention GT 7 / Cap 2030, source du texte « végétalisation et photovoltaïque » ;
-- cohérence : texte de l'aide (« somme égale à la parcelle ») et contrôle de l'outil (Σ ≤ parcelle) ; rattachement des lignes créées à leur zone (voir Idées) ;
-- mise en page : débordement de 17 px à 1 280 px, arrondi commun des m² éco.
-**Après la 0.9** : confort de saisie (confirmations, « Appliquer aussi à A », « Créer B à partir de A »), modes d'affichage de l'axo, 4 états du protocole GT 7, mobile, allègement de l'axo.
+## Synthèse (état à la 0.9.0, version test)
+**Fonctionne** : calcul CBSh de deux scénarios (A, B) avec comparaison, vérifié sur un cas de référence ; Accueil (axonométrie cliquable, légendes à gauche et à droite, zones à 0 m² grisées, cartes de bascule) ; saisie par popups de zone et par tableau (ajout, suppression des lignes vides) ; noms de scénarios modifiables ; onglet Aide intégré ; sauvegarde automatique dans le navigateur ; export / import JSON ; export CSV pour Excel. Réglages regroupés dans `js/config.js`. 44 tests Node (calcul, cas de référence, données, validation, CSV, configuration).
+**Pour la 1.0** (première version annoncée et diffusée) : retours des testeurs de la 0.9.0 ; mise en page mobile (< 900 px) ; source du texte « végétalisation et photovoltaïque ».
+**Prochaine version technique (0.9.2)** : découper `app.js` (formats, étiquettes, popups, sauvegarde/import) et tester la logique pure extraite ; alléger l'axo.
+**Après** : confort de saisie (confirmations, « Appliquer aussi à A », « Créer B à partir de A »), modes d'affichage de l'axo, 4 états du protocole GT 7.
 
 ## Développement (GitHub Pages statique HTML/CSS/JS)
 - [x] 0.8.0 squelette : 2 onglets, mise en page, illustrations statiques
@@ -32,13 +29,16 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [x] 0.8.14 retours 0.8.13 : légendes à gauche et à droite et cliquables, zones à 0 m² grisées, noms de scénarios modifiables, suppression des lignes vides, parcelle non forcée
 - [x] 0.8.15 onglet Aide intégré (sommaire fixe, texte et figure de l'aide fournie)
 - [x] 0.8.16 sauvegarde locale (noms de scénarios compris) + export CSV/JSON ; aide refaite (4 catégories, figure SVG aux couleurs de l'app) ; démarrage sur le scénario A
-- [ ] 0.9 outil fonctionnel, calcul vérifié sur cas de référence
+- [x] 0.8.17 corrections de l'audit : zone des lignes créées, import (parcelle forcée typée, surfaces bornées), politique de sécurité de contenu, grisage mémorisé, sauvegarde différée
+- [x] 0.8.18 lisibilité : `js/config.js`, variables en tête, lignes longues coupées, outils Python factorisés (`outils/constantes.py`)
+- [x] 0.9.0 version test : calcul vérifié sur cas de référence, aide corrigée (Σ ≤ parcelle) et complétée, arrondi commun des m² éco, plus de débordement horizontal dès 1 101 px
+- [ ] 0.9.2 découpage de `app.js` en scripts (formats, étiquettes, popups, sauvegarde) et tests de la logique pure ; allègement de l'axo
 
 ## Idées / évolutions
-- [ ] Aide : mentionner la sauvegarde automatique, l'export CSV / JSON et l'import (menu « Projet »)
-- [ ] Zone d'une ligne créée : si une ligne supprimée libère son numéro (ex. 12) et qu'une nouvelle ligne le reprend dans une autre zone, `zoneDeLigne` cherche d'abord dans les listes de `zones.json` et peut la rattacher à l'ancienne zone ; à vérifier, puis donner la priorité à `ligne.zone`
+- [x] Aide : mentionner la sauvegarde automatique, l'export CSV / JSON et l'import (menu « Projet »)
+- [x] Zone d'une ligne créée : `ligne.zone` prime sur les listes de `zones.json` (0.8.17, `zoneDeLigne` dans `calcul.js`)
 - [ ] Projet restauré : proposer de revenir à la version du site quand l'exemple change
-- [ ] Aide : « la somme doit être égale à la parcelle » (texte d'origine) alors que l'outil accepte Σ ≤ parcelle ; harmoniser le texte ou le contrôle
+- [x] Aide : « la somme doit être égale à la parcelle » (texte d'origine) alors que l'outil accepte Σ ≤ parcelle ; harmoniser le texte ou le contrôle
 - [ ] Popups : choix des strates pour les espaces verts (aujourd'hui strates par défaut de la typologie)
 - [ ] Axo cliquable sur écran étroit (calque masqué sous 900 px)
 - [ ] Arbres de la bande est (axo et coupe) : à retirer ou à garder alors que la ligne 8 est en « pleine terre · 1 strate »
@@ -47,7 +47,7 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [ ] Zones du sol cachées par un bâtiment : l'emprise cliquable déborde sur les façades
 - [ ] Dimensions de la parcelle (40 × 25 m, dans les données) : plus affichées depuis 0.8.13 ; décider où les montrer
 - [ ] Grisage des zones à 0 m² : un arbre qui déborde sur une zone voisine est coupé net au contour de la zone (ex. arbre du jardin sur dalle)
-- [ ] Mise en page : débordement horizontal de 17 px à 1280 px de large (cartes de chiffres clés de l'Accueil, déjà présent en 0.8.13)
+- [x] Mise en page : débordement horizontal de 17 px à 1280 px de large (cartes de chiffres clés de l'Accueil, déjà présent en 0.8.13)
 - [ ] Noms de scénarios : choix du nom abrégé de la coupe (aujourd'hui nom tronqué à 14 caractères)
 - [ ] Message de confirmation après validation (« … modifiée dans B »)
 - [ ] Confirmation si changement de scénario avec une popup ouverte
@@ -59,12 +59,14 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [ ] Exploiter l'espace libre des cartes A/B de l'onglet 2 (ex. mini-mosaïque)
 - [ ] Partage multi-utilisateurs (nécessiterait un serveur)
 - [ ] Mise en page mobile (< 900 px) : seul un empilement de secours existe en 0.8.0
-- [ ] Règle d'arrondi commune des m² éco (« +275 » à l'Accueil, « +274,7 » dans le tableau)
+- [x] Règle d'arrondi commune des m² éco (« +275 » à l'Accueil, « +274,7 » dans le tableau)
 - [ ] Textes des illustrations SVG (chargées en `<img>`) : police Inter non appliquée, repli sur la police système
-- [ ] Alléger l'axo (963 Ko, 108 Ko compressés) : réduire les décimales et les éléments de texture
+- [ ] Alléger l'axo (963 Ko, 108 Ko compressés) : réduire les décimales et les éléments de texture ; idem `coupe_tranche.svg` (363 Ko)
+- [ ] Tests de `app.js` : extraire la logique pure (disposition des étiquettes, formats, choix de typologie des toitures) pour la tester sous Node
+- [ ] Rangement des étiquettes mémorisé (il ne dépend pas des surfaces) : ne mettre à jour que les textes à chaque frappe
 
 ## Données
-- [ ] Coefficients par défaut : le repérage vient de l'astérisque de la grille (l'agricole « 0,6* » n'est pas souligné) — à confirmer avec le GT 7
-- [ ] Texte de la mention GT 7 / Cap 2030 : vérifier la formulation exigée par la grille
+- [x] Coefficients par défaut : le repérage vient de l'astérisque de la grille (l'agricole « 0,6* » n'est pas souligné) — confirmé (8 novembre 2026)
+- [x] Texte de la mention GT 7 / Cap 2030 : formulation confirmée (8 novembre 2026)
 - [x] Nettoyer la nomenclature (20240902_Nomenclature_CBSh_Diffusion_.xlsx) : IDs en #REF!, dernière ligne des toitures sans ID, coefficients mêlant texte (« 0,1* ») et nombres ; repérer les coefficients par défaut (soulignés) → `data/nomenclature.json`
 - [x] Contrôle Σ surfaces = surface de la parcelle (surfaces projetées, pas de façades)

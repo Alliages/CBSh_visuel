@@ -1,4 +1,4 @@
-/* CBSh — feuille de style (0.8.18). Réglages, palette et dimensions en tête de fichier. */
+/* CBSh — feuille de style (0.9.0). Réglages, palette et dimensions en tête de fichier. */
 
 /* ============================== Réglages ============================== */
 @font-face {
@@ -191,7 +191,7 @@ a { color: inherit; }
 .nom-edit-champ:focus { outline: 2px solid var(--or); outline-offset: 1px; }
 
 /* ============================== Accueil : chiffres clés ============================== */
-.rangee-kpi { display: grid; grid-template-columns: 600fr 280fr 600fr; gap: var(--ecart-cartes); }
+.rangee-kpi { display: grid; grid-template-columns: minmax(0, 600fr) minmax(0, 280fr) minmax(0, 600fr); gap: var(--ecart-cartes); }   /* minmax(0, …) : une carte ne force plus la page à déborder */
 .kpi { display: grid; grid-template-columns: auto 1fr; gap: 28px; min-height: 180px; padding: 28px; }
 .kpi-gauche { display: flex; flex-direction: column; justify-content: space-between; }
 .kpi-valeur { display: flex; align-items: baseline; gap: 14px; }
@@ -576,6 +576,9 @@ a { color: inherit; }
 .aide-plus { background: color-mix(in srgb, var(--celadon) 45%, #fff); }
 .aide-plus a { color: var(--jet); }
 .aide-mention { margin-top: 16px !important; font-size: 13px !important; color: var(--gris); }
+/* Cartes de chiffres clés (0.9.0) : pas de débordement de 1 100 à 1 400 px. Placé après les règles de base de .kpi (même spécificité). */
+@media (max-width: 1400px) { .kpi { grid-template-columns: fit-content(180px) minmax(0, 1fr); gap: 20px; padding: 24px 20px; } .kpi-valeur .grand { font-size: 60px; } .kpi-cats li { grid-template-columns: 1fr 80px 36px; gap: 10px; } }   /* 0.9.0 : cartes de chiffres clés sans débordement à 1 280 px (colonne de gauche limitée, texte de parcelle sur 2 lignes) */
+@media (max-width: 1200px) { .kpi-valeur .grand { font-size: 52px; } .kpi-cats li { grid-template-columns: 1fr 52px 36px; } }
 @media (max-width: 1100px) {
   .aide-page { grid-template-columns: minmax(0, 1fr); }
   .aide-sommaire { position: static; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 16px; }

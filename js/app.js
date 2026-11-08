@@ -1,4 +1,4 @@
-// CBSh visuel — interface (0.8.18) : onglets, chargement des données, rendu, saisie des surfaces du scénario actif (A ou B),
+// CBSh visuel — interface (0.9.0) : onglets, chargement des données, rendu, saisie des surfaces du scénario actif (A ou B),
 // bascule par les cartes de résultat, noms de scénarios modifiables, étiquettes cliquables de toutes les lignes (colonnes à gauche
 // et à droite de l'illustration), zones à 0 m² grisées, popup de zone sur 2 colonnes, suppression des lignes vides, aide,
 // sauvegarde locale, export / import JSON et export CSV. Le calcul est dans calcul.js, la validation et le CSV dans projet_io.js.
@@ -30,6 +30,8 @@ const espaceInsecable = (t) => t.replace(/\u202f/g, NBSP);          // espace fi
 const entier = (x) => espaceInsecable(nf0.format(x));
 const dec1 = (x) => espaceInsecable(nf1.format(x));
 const cbshTxt = (x) => nf2.format(x);
+// Règle d'arrondi des m² éco : les totaux et les écarts (cartes, tableau, étiquettes, popups) ont une décimale (dec1, signe(…, dec1, 10)) ;
+// les sous-totaux par catégorie (barres de l'Accueil, bandeaux du tableau) sont arrondis à l'entier ; les surfaces s'affichent en entiers.
 /** Valeur signée (+ / −) selon l'arrondi d'affichage ; `pas` : 1 pour un entier, 10 pour une décimale, 100 pour deux. */
 function signe(x, format, pas) {
   const r = Math.round(x * pas) / pas;
@@ -301,7 +303,7 @@ function majCarteSaisie(cle) {
   const res = resultats[cle];
   const carte = document.getElementById(`saisie-${cle}`);
   carte.querySelector(".grand").textContent = cbshTxt(res.cbsh);
-  carte.querySelector(".kpi-detail").textContent = `CBSh · ${entier(res.ecoTotal)}${NBSP}m² éco`;
+  carte.querySelector(".kpi-detail").textContent = `CBSh · ${dec1(res.ecoTotal)}${NBSP}m² éco`;
   carte.querySelector(".kpi-parcelle").textContent = texteParcelle(res);
   carte.querySelector(".liste-cats").innerHTML = nomenclature.categories.map((cat) =>
     `<li class="${classeCat(cat.cle)}"><span class="pastille-cat"></span><span>${esc(cat.libelle)}</span>`
@@ -468,7 +470,7 @@ function rendreEtiquettes() {
 function majGain() {
   const g = ecartScenarios(resultats[SCENARIO_BASE], resultats[SCENARIO_VARIANTE]);
   document.getElementById("gain-valeur").textContent = signe(g.cbsh, cbshTxt, 100);
-  document.getElementById("gain-m2").textContent = `${signe(g.eco, entier, 1)}${NBSP}m² ${LIBELLE_ECO_AMENAGEABLES}`;
+  document.getElementById("gain-m2").textContent = `${signe(g.eco, dec1, 10)}${NBSP}m² ${LIBELLE_ECO_AMENAGEABLES}`;
 }
 
 function majMosaique() {

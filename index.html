@@ -269,7 +269,7 @@
           <li>Toiture extensive sédum<b>200 m² × 0,1 = 20 m² éco</b></li>
           <li>Enrobé<b>300 m² × 0 = 0 m² éco</b></li>
         </ul>
-        <p>Par exemple, 410 m² « écologiques » sur une parcelle de 1 000 m² donnent un CBSh de 0,41. Les surfaces saisies sont des projections horizontales (sol et toitures) : les façades ne comptent pas, et leur somme doit être égale à la surface de la parcelle.</p>
+        <p>Par exemple, 410 m² « écologiques » sur une parcelle de 1 000 m² donnent un CBSh de 0,41. Les surfaces saisies sont des projections horizontales (sol et toitures) : les façades ne comptent pas. Leur somme ne peut pas dépasser la surface de la parcelle. Si une partie de la parcelle n’est pas saisie, indiquez la surface de la parcelle dans l’onglet « Saisie et détails » : la part non saisie compte pour 0. Sans valeur, l’outil retient la somme des surfaces saisies.</p>
       </section>
 
       <section class="carte aide-section" id="aide-nomenclature" aria-labelledby="titre-aide-nomenclature">
@@ -319,6 +319,7 @@
       <section class="carte aide-section" id="aide-outil" aria-labelledby="titre-aide-outil">
         <h2 id="titre-aide-outil">Utiliser l'outil</h2>
         <p>Vous comparez deux scénarios d’un même projet, A et B ; un clic sur le nom d’un scénario, dans sa carte, permet de le renommer. Cliquez sur une zone du plan ou sur une étiquette pour saisir ses surfaces, ou utilisez l’onglet « Saisie et détails » pour le tableau complet. Une ligne vide dans les deux scénarios peut y être supprimée (✕). Le gain entre A et B s’affiche en points de CBSh.</p>
+        <p>Vos saisies sont enregistrées automatiquement dans ce navigateur : elles sont retrouvées au rechargement, mais ne passent pas d’un appareil à un autre. Le menu « Projet » permet d’exporter le projet (.json), de le réimporter ou de revenir à l’exemple ; le bouton « Exporter .csv » produit un tableau lisible dans Excel.</p>
       </section>
 
       <section class="carte aide-section aide-plus" id="aide-plus" aria-labelledby="titre-aide-plus">
@@ -337,7 +338,7 @@
 <footer class="pied">
   <p>Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, dans le cadre du projet Cap 2030.</p>
   <p>Plus d'informations : <a href="https://www.planbatimentdurable.developpement-durable.gouv.fr/gt-biodiversite-a1638.html" rel="noopener">GT 7 Biodiversité</a></p>
-  <p class="pied-version">CBSh visuel · version 0.8.18 · licence GPL-3.0 · <a href="https://github.com/alliages/cbsh_visuel" rel="noopener">code source</a> · les valeurs affichées sont des données d'exemple</p>
+  <p class="pied-version">CBSh visuel · version 0.9.0 (version test) · licence GPL-3.0 · <a href="https://github.com/alliages/cbsh_visuel" rel="noopener">code source</a> · les valeurs affichées sont des données d'exemple</p>
 </footer>
 
 </div>

@@ -11,7 +11,7 @@ Outil web de calcul et de comparaison du **CBSh** (coefficient de biotope surfac
 > Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, dans le cadre du projet Cap 2030 (nomenclature de septembre 2024). L'outil en ligne du CSTB est propriétaire : seule la méthode est reprise ici.
 
 ## État
-Version 0.8.x : outil en construction. Le calcul et la saisie des surfaces (scénarios A et B, noms modifiables) fonctionnent ; les valeurs affichées sont des données d'exemple.
+**Version 0.9.0 : version test.** L'outil fonctionne : calcul et comparaison de deux scénarios (A et B, noms modifiables), saisie par le plan illustré ou par le tableau, sauvegarde automatique dans le navigateur, export / import JSON, export CSV pour Excel, aide intégrée. Le calcul est vérifié sur un cas de référence (voir `outils/tests/test_calcul.mjs`). Les valeurs affichées au démarrage sont des données d'exemple. Retours bienvenus avant la première version annoncée (1.0).
 
 ## Lancer en local
 Site statique, aucune dépendance. Les données sont chargées par `fetch` : le site doit être servi (pas ouvert directement depuis un fichier). Depuis PowerShell, à la racine du dépôt :

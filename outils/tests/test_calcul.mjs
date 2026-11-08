@@ -438,3 +438,48 @@ test("lisibilité : aucun réglage dupliqué hors config.js (scénarios, bornes,
     assert.doesNotMatch(src, /"bat"/, `${f} : utiliser CAT_TOITURE`);
   }
 });
+
+// ================= 0.9.0 : cas de référence =================
+// Projet d'exemple enregistré (data/projet_exemple.json) : Σ des surfaces = 966 m² dans A comme dans B, parcelle non forcée.
+// Valeurs de référence calculées à la main (surface × coefficient de la nomenclature), indépendamment du code :
+//   n° :        1    2     3     4     5    6     7     8     9     10    11    12
+//   coef. :     0    0,1   0,2   0,7   0    0,1   0,2   0,7   0,7   0,9   0,7   0,7
+//   A (m²) :  132    60   204   108    72   12    99    48     0   150    67    14   → m² éco 0 ; 6 ; 40,8 ; 75,6 ; 0 ; 1,2 ; 19,8 ; 33,6 ; 0 ; 135 ; 46,9 ; 9,8 = 368,7
+//   B (m²) :  200   200     0     0   306  110     0     0   150     0     0     0   → m² éco 0 ; 20 ; 0 ; 0 ; 0 ; 11 ; 0 ; 0 ; 105 ; 0 ; 0 ; 0 = 136
+const REFERENCE = {
+  A: { surface: 966, eco: 368.7, cbsh: 368.7 / 966, parCategorie: { bat: 122.4, voi: 21, ev: 215.5, eau: 9.8 } },
+  B: { surface: 966, eco: 136, cbsh: 136 / 966, parCategorie: { bat: 20, voi: 11, ev: 105, eau: 0 } },
+};
+
+test("cas de référence : CBSh, m² éco et contributions par catégorie du projet d'exemple (calcul à la main)", () => {
+  const res = resultatsExemple();
+  for (const [cle, attendu] of Object.entries(REFERENCE)) {
+    proche(res[cle].surfaceTotale, attendu.surface);
+    proche(res[cle].surfaceParcelle, attendu.surface);
+    assert.equal(res[cle].forcee, false);
+    proche(res[cle].ecoTotal, attendu.eco, 1e-9);
+    proche(res[cle].cbsh, attendu.cbsh, 1e-12);
+    for (const [cat, eco] of Object.entries(attendu.parCategorie)) proche(res[cle].parCategorie[cat]?.eco ?? 0, eco, 1e-9);
+  }
+  assert.equal(res.A.cbsh.toFixed(2), "0.38");
+  assert.equal(res.B.cbsh.toFixed(2), "0.14");
+  const gain = ecartScenarios(res.B, res.A);                       // B de référence, A cible : même sens que l'affichage (A − B)
+  proche(gain.eco, 232.7, 1e-9);
+});
+
+test("cas de référence : parcelle forcée à 1 000 m² (la part non saisie compte pour 0)", () => {
+  const a = calculerScenario(projet.lignes, typologies, "A", 1000);
+  const b = calculerScenario(projet.lignes, typologies, "B", 1000);
+  proche(a.cbsh, 0.3687, 1e-12);
+  proche(b.cbsh, 0.136, 1e-12);
+  proche(a.nonComptee, 34, 1e-9);
+  assert.equal(a.controle.conforme, true);
+  assert.equal(calculerScenario(projet.lignes, typologies, "A", 900).controle.conforme, false);   // Σ = 966 > 900 : signalé
+});
+
+test("aide : le texte ne dit plus que la somme doit être égale à la parcelle", () => {
+  const html = readFileSync(new URL("../../index.html", import.meta.url), "utf-8");
+  assert.doesNotMatch(html, /doit être égale/);
+  assert.match(html, /ne peut pas dépasser la surface de la parcelle/);
+  assert.match(html, /enregistrées automatiquement dans ce navigateur/);
+});
