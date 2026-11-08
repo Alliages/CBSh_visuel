@@ -9,6 +9,7 @@
 (function () {
 // ================= Réglages =================
 const TOLERANCE_SURFACE = 0.05;   // m² : dépassement toléré de la surface de la parcelle (forcée) par Σ des surfaces
+const SURFACE_MAX = 1e9;          // m² : borne haute d'une surface saisie ou importée (évite les débordements numériques)
 
 // ================= Nomenclature =================
 /** Index des typologies par identifiant. */
@@ -22,6 +23,14 @@ function strateValide(typologie, strates) {
   if (regle === null) return strates === null;
   if (!Array.isArray(strates) || strates.length !== regle.nombre) return false;
   return new Set(strates).size === strates.length && strates.every((s) => regle.parmi.includes(s));
+}
+
+/** Zone de saisie d'une ligne : celle mémorisée sur la ligne (`ligne.zone`, ligne créée) en priorité, sinon celle qui la liste
+ *  dans zones.json ; undefined si aucune. La priorité à `ligne.zone` évite qu'une ligne créée, qui reprend le numéro d'une ligne
+ *  supprimée, soit rattachée à l'ancienne zone de ce numéro. */
+function zoneDeLigne(ligne, zonesDonnees) {
+  const saisies = zonesDonnees.zones.filter((z) => z.type === "saisie");
+  return saisies.find((z) => z.id === ligne.zone) ?? saisies.find((z) => z.lignes.includes(ligne.n));
 }
 
 // ================= Calcul =================
@@ -105,7 +114,7 @@ function verifierDonnees(nomenclature, projet, zonesDonnees = null) {
     if (!strateValide(t, l.strates)) erreurs.push(`Ligne ${l.n} : strates incompatibles avec la typologie ${t.id}`);
     for (const { cle } of scenarios) {
       const s = l.surfaces?.[cle];
-      if (!(Number.isFinite(s) && s >= 0)) erreurs.push(`Ligne ${l.n} : surface invalide pour le scénario ${cle}`);
+      if (!(Number.isFinite(s) && s >= 0 && s <= SURFACE_MAX)) erreurs.push(`Ligne ${l.n} : surface invalide pour le scénario ${cle}`);
     }
   }
   // Zones de l'illustration (facultatif) : lignes citées existantes, catégorie cohérente, une ligne dans une seule zone
@@ -132,7 +141,7 @@ function verifierDonnees(nomenclature, projet, zonesDonnees = null) {
   if (erreurs.length === 0) {
     for (const { cle } of scenarios) {
       const forcee = scenarios.find((s) => s.cle === cle).surface_parcelle ?? null;
-      if (forcee !== null && !(forcee > 0)) { erreurs.push(`Scénario ${cle} : surface de parcelle forcée invalide (${forcee})`); continue; }
+      if (forcee !== null && !(typeof forcee === "number" && forcee > 0 && forcee <= SURFACE_MAX)) { erreurs.push(`Scénario ${cle} : surface de parcelle forcée invalide (${forcee})`); continue; }
       const r = calculerScenario(lignes, typologies, cle, forcee);
       if (!r.controle.conforme) erreurs.push(`Scénario ${cle} : Σ surfaces = ${r.surfaceTotale} m² > parcelle forcée ${forcee} m²`);
     }
@@ -141,5 +150,5 @@ function verifierDonnees(nomenclature, projet, zonesDonnees = null) {
 }
 
 // Exposé en global (script classique : fonctionne aussi sans serveur) et importable sous Node pour les tests.
-globalThis.CBShCalcul = { TOLERANCE_SURFACE, indexerTypologies, strateValide, calculerScenario, ecartScenarios, verifierDonnees };
+globalThis.CBShCalcul = { TOLERANCE_SURFACE, SURFACE_MAX, indexerTypologies, strateValide, zoneDeLigne, calculerScenario, ecartScenarios, verifierDonnees };
 })();

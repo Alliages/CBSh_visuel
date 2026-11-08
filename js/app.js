@@ -1,10 +1,10 @@
-// CBSh visuel — interface (0.8.16) : onglets, chargement des données, rendu, saisie des surfaces du scénario actif (A ou B),
+// CBSh visuel — interface (0.8.17) : onglets, chargement des données, rendu, saisie des surfaces du scénario actif (A ou B),
 // bascule par les cartes de résultat, noms de scénarios modifiables, étiquettes cliquables de toutes les lignes (colonnes à gauche
 // et à droite de l'illustration), zones à 0 m² grisées, popup de zone sur 2 colonnes, suppression des lignes vides, aide,
 // sauvegarde locale, export / import JSON et export CSV. Le calcul est dans calcul.js, la validation et le CSV dans projet_io.js.
 "use strict";
 // Dépend de calcul.js (chargé avant, expose CBShCalcul).
-const { indexerTypologies, calculerScenario, ecartScenarios, strateValide, verifierDonnees } = CBShCalcul;
+const { indexerTypologies, calculerScenario, ecartScenarios, strateValide, verifierDonnees, zoneDeLigne: zoneDeLigneDans } = CBShCalcul;
 // Dépend aussi de projet_io.js (chargé avant, expose CBShProjet).
 const { CLE_STOCKAGE, serialiser, lireSauvegarde, validerProjet, lireFichierProjet, genererCsv, nomFichier } = CBShProjet;
 
@@ -37,6 +37,7 @@ const ETIQ_DECALAGE_REPERE = 10;                    // décalage vertical entre 
 const NOM_SCENARIO_MAX = 40;                        // longueur maximale du nom d'un scénario
 const ERREURS_AFFICHEES = 3;                        // import refusé : nombre de motifs cités dans le message
 const DELAI_CONFIRMATION_MS = 5000;                 // « Revenir à l'exemple » : délai pour confirmer
+const DELAI_SAUVEGARDE_MS = 400;                    // sauvegarde locale différée après la dernière modification (évite une écriture par frappe)
 const NOM_COURT_MAX = 14;                           // nom abrégé (sélecteur de la coupe) : tronqué au-delà
 const NBSP = " ";
 
@@ -64,6 +65,8 @@ let zonesDonnees = null;     // data/zones.json
 let resultats = {};          // clé de scénario → résultat de calculerScenario
 let scenarioActif = SCENARIO_PAR_DEFAUT;   // scénario modifiable (bascule A / B)
 let sauvegardeActive = false;  // vrai dès la première modification (ou après une restauration) : avant, rien n'est écrit dans le navigateur
+let minuteurSauvegarde = null; // sauvegarde différée en attente (null = aucune)
+let cleGrisage = null;         // zones actuellement grisées (clé) : le calque n'est refait que si elle change
 
 // ================= Onglets =================
 const boutons = ONGLETS.map((id) => document.getElementById(`onglet-${id}`));
@@ -214,8 +217,7 @@ function rendreStructure() {
     }
   }
   majNomsScenarios();
-  rendreTableau();
-  majFacade();
+  majFacade();                                             // le tableau est rendu par definirScenarioActif (démarrage)
 }
 
 const nomCourt = (nom) => (nom.length > NOM_COURT_MAX ? `${nom.slice(0, NOM_COURT_MAX - 1).trimEnd()}…` : nom);
@@ -372,7 +374,7 @@ function majTableau() {
     if (!cle.startsWith("parcelle-mode-")) el.textContent = texte;
     if (/^(m2|eco)-/.test(cle)) el.classList.toggle("vide", texte === "—");          // cellules sans surface : grisées
     if (cle.startsWith("parcelle-mode-")) {                                       // pastille « forcée » / « = Σ »
-      el.innerHTML = `<span class="mode-parcelle${texte === "forcée" ? " forcee" : ""}">${texte}</span>`;
+      el.replaceChildren(Object.assign(document.createElement("span"), { className: `mode-parcelle${texte === "forcée" ? " forcee" : ""}`, textContent: texte }));
     }
     if (cle.startsWith("ecart-")) {
       el.classList.toggle("plus", texte.startsWith("+"));
@@ -636,7 +638,7 @@ const surfaceActive = (ligne) => ligne.surfaces[scenarioActif] ?? 0;
 const trouverZone = (id) => zonesDonnees.zones.find((z) => z.id === id);
 
 /** Zone de saisie d'une ligne : celle qui la liste (zones.json), sinon celle mémorisée sur la ligne (ligne créée) ; undefined si aucune. */
-const zoneDeLigne = (ligne) => zonesDonnees.zones.find((z) => z.type === "saisie" && (z.lignes.includes(ligne.n) || z.id === ligne.zone));
+const zoneDeLigne = (ligne) => zoneDeLigneDans(ligne, zonesDonnees);
 const lignesDeZone = (zone) => projet.lignes.filter((l) => zoneDeLigne(l)?.id === zone.id);
 const zonesDeSaisie = (categorie) => zonesDonnees.zones.filter((z) => z.type === "saisie" && z.categorie === categorie);
 
@@ -723,6 +725,9 @@ function rendreZones() {
 function majGrisage() {
   const calque = document.getElementById("calque-gris");
   const grises = zonesDonnees.zones.filter((z) => z.type === "saisie" && lignesDeZone(z).every((l) => surfaceActive(l) === 0));
+  const cle = grises.map((z) => z.id).join(",");
+  if (cle === cleGrisage) return;                                       // mêmes zones grisées : on évite de refaire l'image de 941 Ko à chaque frappe
+  cleGrisage = cle;
   if (!grises.length) { calque.innerHTML = ""; return; }
   const [x, y, largeur, hauteur] = zonesDonnees.viewBox.split(" ");
   calque.innerHTML = `<defs><clipPath id="decoupe-gris">${grises.map((z) => `<path d="${z.chemin}"/>`).join("")}</clipPath></defs>`
@@ -1063,6 +1068,8 @@ function initialiserPopup() {
 /** Écrit le projet dans le navigateur (localStorage) — seulement si une modification a déjà eu lieu ou si un projet a été restauré,
  *  pour que l'exemple, mis à jour d'une version à l'autre, ne soit pas figé dès la première visite. */
 function sauvegarder(origine = "auto") {
+  clearTimeout(minuteurSauvegarde);
+  minuteurSauvegarde = null;
   if (!sauvegardeActive) return;
   try {
     localStorage.setItem(CLE_STOCKAGE, serialiser(projet, scenarioActif, origine));
@@ -1076,7 +1083,15 @@ function sauvegarder(origine = "auto") {
 /** À appeler après chaque modification faite par l'utilisateur. */
 function projetModifie() {
   sauvegardeActive = true;
-  sauvegarder();
+  clearTimeout(minuteurSauvegarde);
+  minuteurSauvegarde = setTimeout(sauvegarder, DELAI_SAUVEGARDE_MS);
+}
+
+/** Abandonne toute sauvegarde en attente (avant un import ou un retour à l'exemple, qui rechargent la page : sinon elle écraserait le résultat). */
+function abandonnerSauvegarde() {
+  clearTimeout(minuteurSauvegarde);
+  minuteurSauvegarde = null;
+  sauvegardeActive = false;
 }
 
 const afficherEtatSauvegarde = (texte) => { document.getElementById("etat-sauvegarde").textContent = texte; };
@@ -1130,6 +1145,7 @@ async function importerProjet(fichier) {
     afficherMessage(`Import refusé : ${motifs}`, true);
     return;
   }
+  abandonnerSauvegarde();
   try { localStorage.setItem(CLE_STOCKAGE, serialiser(propre, scenarioActif, "import")); }
   catch { afficherMessage("Import impossible : ce navigateur n'autorise pas l'enregistrement local.", true); return; }
   location.reload();
@@ -1170,6 +1186,7 @@ function initialiserMenuProjet() {
         minuteur = setTimeout(annulerConfirmation, DELAI_CONFIRMATION_MS);
         return;
       }
+      abandonnerSauvegarde();
       try { localStorage.removeItem(CLE_STOCKAGE); } catch { /* stockage inaccessible : rien à effacer */ }
       location.reload();
     }
@@ -1221,6 +1238,7 @@ async function demarrer() {
   initialiserRenommage();
   initialiserAide();
   initialiserMenuProjet();
+  window.addEventListener("pagehide", () => { if (minuteurSauvegarde !== null) sauvegarder(); });      // écrit la saisie en attente avant de quitter
   definirScenarioActif(scenarioActif);                     // rend le tableau, place le champ de la parcelle et calcule
   if (restauration) afficherMessage(restauration.texte, restauration.erreur);
 }

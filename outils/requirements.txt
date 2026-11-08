@@ -1,0 +1,2 @@
+# Dépendance des outils Python (hors site) : conversion de la grille xlsx.
+openpyxl>=3.1,<4

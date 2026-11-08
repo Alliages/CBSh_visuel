@@ -1,5 +1,14 @@
 # Changelog — Outil CBSh
 
+## 0.8.17 — corrections issues de l'audit (sécurité, rapidité, cohérence)
+- **Zone d'une ligne** : `ligne.zone` (zone mémorisée à la création) prime désormais sur les listes de `zones.json`. Corrige le rattachement d'une ligne créée qui reprend le numéro d'une ligne supprimée (elle apparaissait dans l'ancienne zone). La règle est dans `calcul.js` (`zoneDeLigne`, pure et testée) et partagée par l'interface et l'import.
+- **Import / sauvegarde** : la surface de parcelle forcée doit être un nombre > 0 (un texte comme « 5 » était accepté) ; toute surface est bornée (`SURFACE_MAX` = 10⁹ m²) pour éviter les débordements numériques.
+- **Sécurité** : politique de sécurité de contenu (`<meta http-equiv="Content-Security-Policy">`) : scripts, polices, images et requêtes limités au site lui-même, pas d'objet ni de formulaire externe ; `rel="noopener noreferrer"` sur le lien externe ouvert dans un nouvel onglet. Vérifié : aucune violation de la politique, y compris page ouverte depuis un fichier.
+- **Rapidité** : le calque de grisage (qui recharge l'image de l'axonométrie, 941 Ko) n'est refait que lorsque la liste des zones à 0 m² change, plus à chaque frappe ; la sauvegarde locale est différée de 400 ms après la dernière modification (et écrite à la fermeture de la page). Un import ou un retour à l'exemple abandonne toute sauvegarde en attente, pour qu'elle n'écrase pas le résultat.
+- **Simplicité** : plus d'`innerHTML` pour la pastille « forcée / = Σ » ; tableau rendu une seule fois au démarrage.
+- **Divers** : lien de déploiement du README en minuscules ; `engines` (Node ≥ 20) dans `package.json` ; `outils/requirements.txt` (openpyxl).
+- Tests Node : 39 (5 nouveaux : priorité de la zone, parcelle forcée invalide, surface démesurée, nom contenant du HTML, politique de sécurité).
+
 ## 0.8.16 — sauvegarde locale, export / import JSON, export CSV
 - **Sauvegarde automatique dans le navigateur** (localStorage) : surfaces, lignes ajoutées ou supprimées, noms de scénarios, surface de parcelle forcée, façade végétalisée et scénario affiché sont conservés au rechargement. Rien n'est écrit avant la première modification (l'exemple, mis à jour d'une version à l'autre, n'est pas figé à la première visite). Un message en haut de page indique qu'un projet a été restauré (date et heure), avec un bouton « Fermer ».
 - **Menu « Projet »** dans l'en-tête (à côté d'« Exporter .csv ») : état de l'enregistrement, « Exporter le projet (.json) », « Importer un projet (.json)… », « Revenir à l'exemple » (deux clics : le premier demande confirmation, annulée par Échap, la fermeture du menu ou 5 s).

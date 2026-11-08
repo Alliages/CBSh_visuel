@@ -18,7 +18,7 @@ const TAILLE_FICHIER_MAX = 1_000_000;               // octets : au-delà, un fic
 const SEPARATEUR_CSV = ";";                         // Excel en français
 const DECIMALES_M2 = 2, DECIMALES_CBSH = 4;         // arrondis du CSV
 
-const { verifierDonnees } = globalThis.CBShCalcul;
+const { verifierDonnees, zoneDeLigne, SURFACE_MAX } = globalThis.CBShCalcul;
 
 // ================= Sauvegarde locale =================
 /** Enveloppe enregistrée dans le navigateur : le projet, le scénario affiché et l'origine (« auto » ou « import »). */
@@ -52,7 +52,13 @@ function validerProjet(brut, nomenclature, zonesDonnees) {
   if (!Array.isArray(scenarios) || scenarios.length !== CLES_SCENARIOS.length || !CLES_SCENARIOS.every((c, i) => scenarios[i]?.cle === c)) {
     erreurs.push(`Scénarios : ${CLES_SCENARIOS.join(" et ")} attendus, dans cet ordre.`);
   }
-  if (!facade || !estNombre(facade.surface) || facade.surface < 0) erreurs.push("Façade végétalisée : surface attendue.");
+  if (!facade || !estNombre(facade.surface) || facade.surface < 0 || facade.surface > SURFACE_MAX) erreurs.push("Façade végétalisée : surface attendue.");
+  if (Array.isArray(scenarios)) {                       // surface de parcelle forcée : nombre > 0 (ou absente = somme des surfaces)
+    for (const s of scenarios) {
+      const f = s?.surface_parcelle;
+      if (f != null && !(estNombre(f) && f > 0 && f <= SURFACE_MAX)) erreurs.push(`Scénario ${s.cle} : surface de parcelle forcée invalide.`);
+    }
+  }
   if (!Array.isArray(lignes)) erreurs.push("Lignes : liste attendue.");
   else if (lignes.length > LIGNES_MAX) erreurs.push(`Lignes : ${LIGNES_MAX} au plus.`);
   if (erreurs.length) return { projet: null, erreurs };
@@ -87,9 +93,8 @@ function validerProjet(brut, nomenclature, zonesDonnees) {
   erreurs.push(...verifierDonnees(nomenclature, propre));
   // Toute ligne doit appartenir à une zone de l'illustration (listée dans zones.json, ou mémorisée sur la ligne). Les listes de
   // zones.json ne sont pas comparées au projet : une ligne supprimée y reste citée.
-  const zonesSaisie = zonesDonnees.zones.filter((z) => z.type === "saisie");
   for (const l of propre.lignes) {
-    if (!zonesSaisie.some((z) => z.lignes.includes(l.n) || z.id === l.zone)) erreurs.push(`Ligne ${l.n} : aucune zone de l'illustration.`);
+    if (!zoneDeLigne(l, zonesDonnees)) erreurs.push(`Ligne ${l.n} : aucune zone de l'illustration.`);
   }
   return erreurs.length ? { projet: null, erreurs } : { projet: propre, erreurs: [] };
 }

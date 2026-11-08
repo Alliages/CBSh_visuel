@@ -373,3 +373,47 @@ test("index.html : menu Projet, bouton CSV actif, scripts dans l'ordre", () => {
   assert.ok(html.indexOf("js/calcul.js") < html.indexOf("js/projet_io.js") && html.indexOf("js/projet_io.js") < html.indexOf("js/app.js"));
   assert.equal(html.match(/<div[\s>]/g).length, html.match(/<\/div>/g).length);
 });
+
+// ================= 0.8.17 =================
+const { zoneDeLigne, SURFACE_MAX } = globalThis.CBShCalcul;
+
+test("zone d'une ligne : ligne.zone prime sur les listes de zones.json (numéro repris après suppression)", () => {
+  const listee = zones.zones.find((z) => z.type === "saisie" && z.lignes.length);
+  const autre = zones.zones.find((z) => z.type === "saisie" && z.id !== listee.id);
+  const n = listee.lignes[0];
+  assert.equal(zoneDeLigne({ n }, zones).id, listee.id);                       // ligne de l'exemple : zone listée
+  assert.equal(zoneDeLigne({ n, zone: autre.id }, zones).id, autre.id);        // ligne créée qui reprend ce numéro : sa propre zone
+  assert.equal(zoneDeLigne({ n: 999, zone: "inconnue" }, zones), undefined);
+});
+
+test("import : surface de parcelle forcée en texte, négative ou démesurée → refus", () => {
+  for (const valeur of ["5", -1, 0, SURFACE_MAX * 10]) {
+    const p = copie(projet);
+    p.scenarios[0].surface_parcelle = valeur;
+    const { projet: sortie, erreurs } = validerProjet(p, nomenclature, zones);
+    assert.equal(sortie, null, `valeur ${valeur} acceptée`);
+    assert.ok(erreurs.length > 0);
+  }
+});
+
+test("import : surface de ligne démesurée → refus", () => {
+  const p = copie(projet);
+  p.lignes[0].surfaces.A = SURFACE_MAX * 10;
+  assert.equal(validerProjet(p, nomenclature, zones).projet, null);
+});
+
+test("import : un nom de scénario contenant du HTML reste un simple texte (échappé à l'affichage)", () => {
+  const p = copie(projet);
+  p.scenarios[0].nom = '<img src=x onerror="alert(1)">';
+  const { projet: sortie, erreurs } = validerProjet(p, nomenclature, zones);
+  assert.deepEqual(erreurs, []);
+  assert.equal(sortie.scenarios[0].nom, '<img src=x onerror="alert(1)">');
+});
+
+test("index.html : politique de sécurité de contenu présente avant les scripts, sans script en ligne", () => {
+  const html = readFileSync(new URL("../../index.html", import.meta.url), "utf-8");
+  assert.ok(html.indexOf("Content-Security-Policy") > 0 && html.indexOf("Content-Security-Policy") < html.indexOf("<script"));
+  assert.match(html, /script-src 'self'/);
+  assert.doesNotMatch(html, /<script(?![^>]*\ssrc=)[^>]*>/);
+  assert.doesNotMatch(html, /\son(click|error|load)=/);
+});
