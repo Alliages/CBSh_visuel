@@ -9,6 +9,7 @@
 - **Données confirmées** : coefficients par défaut (repérés dans la grille) et texte de la mention GT 7 / Cap 2030 confirmés.
 - **Version test** : pied de page « version 0.9.0 (version test) » ; README mis à jour.
 - Tests Node : 44 (3 nouveaux : cas de référence, parcelle forcée, texte de l'aide).
+- **Pied de page** : mention « Conception et développement : Guillaume Meunier » ajoutée avant la ligne de licence.
 
 ## 0.8.18 — lisibilité : réglages regroupés dans `js/config.js`, outils Python factorisés (aucun changement de comportement)
 - **`js/config.js`** (chargé en premier, expose `CBShConfig`, sans logique) : chemins des données, langue, clés et longueurs des scénarios, clé de la catégorie « toitures » (`CAT_TOITURE`, remplace huit « bat » écrits dans le code), tolérances et bornes de surface, seuils d'affichage, dimensions du plan et des étiquettes, délais, limites d'import, paramètres du CSV, libellé « éco-aménageables » et messages d'état (`TEXTES`). Importé par `calcul.js`, `projet_io.js` et `app.js`. Supprime les doublons (`NOM_SCENARIO_MAX`, clés « A » / « B »).
