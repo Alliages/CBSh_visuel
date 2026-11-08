@@ -41,52 +41,61 @@ test("données : nomenclature et projet d'exemple cohérents", () => {
 
 // ================= Calcul =================
 // Le projet d'exemple ne force pas la parcelle (0.8.14) : dénominateur = Σ des surfaces de chaque scénario (966 m² : les 34 m² de
-// venelle ne sont pas comptés). Depuis 0.8.14, A = « Variante « best » » (CBSh élevé) et B = « Projet de base » (valeurs échangées).
+// venelle ne sont pas comptés). Depuis 0.9.1, A = « Projet de base » (coefficients par défaut de la nomenclature) et B = « Variante « best » »,
+// sur les mêmes surfaces par zone (les lignes 13 à 17 portent la valeur par défaut des zones dont la variante change de typologie).
 const forcee = (cle) => projet.scenarios.find((s) => s.cle === cle).surface_parcelle ?? null;
 
-test("projet d'exemple : parcelle non forcée (null) pour A et B, noms échangés", () => {
+test("projet d'exemple : parcelle non forcée (null) pour A et B", () => {
   assert.equal(forcee("A"), null);
   assert.equal(forcee("B"), null);
-  assert.deepEqual(projet.scenarios.map((s) => s.nom), ["Variante « best »", "Projet de base"]);
+  assert.deepEqual(projet.scenarios.map((s) => s.nom), ["Projet de base", "Variante « best »"]);
   assert.equal(projet.parcelle.surface, 1000);               // surface de la parcelle (donnée de référence, non utilisée comme dénominateur)
 });
 
-test("projet d'exemple : scénario A (variante, CBSh 368,7 / 966 = 0,3817)", () => {
+test("projet d'exemple : scénario A (base, valeurs par défaut, CBSh 198,7 / 966 = 0,2057)", () => {
   const a = calculerScenario(projet.lignes, typologies, "A", forcee("A"));
   proche(a.surfaceTotale, 966);
   proche(a.surfaceParcelle, 966);                            // parcelle = Σ
   assert.equal(a.forcee, false);
   proche(a.nonComptee, 0);
-  proche(a.ecoTotal, 368.7);
-  proche(a.cbsh, 368.7 / 966);
+  proche(a.ecoTotal, 198.7);
+  proche(a.cbsh, 198.7 / 966);
   assert.equal(a.controle.conforme, true);
-  proche(a.parCategorie.bat.eco, 122.4);
-  proche(a.parCategorie.voi.eco, 21);
-  proche(a.parCategorie.ev.eco, 215.5);
-  proche(a.parCategorie.eau.eco, 9.8);
-  proche(a.parLigne.get(4).eco, 75.6);
+  proche(a.parCategorie.bat.eco, 37.2);
+  proche(a.parCategorie.voi.eco, 0);
+  proche(a.parCategorie.ev.eco, 158.7);
+  proche(a.parCategorie.eau.eco, 2.8);
+  proche(a.parLigne.get(2).eco, 26.4);              // ligne 2 : sédum (valeur par défaut, coef 0,1) × 264 m²
   proche(a.parLigne.get(8).eco, 33.6);              // ligne 8 : pleine terre 1 strate (coef 0,7) × 48 m²
 });
 
-test("projet d'exemple : scénario B (base, CBSh 136 / 966 = 0,1408) et gain B − A", () => {
+test("projet d'exemple : scénario B (variante, CBSh 368,7 / 966 = 0,3817) et gain B − A", () => {
   const a = calculerScenario(projet.lignes, typologies, "A", forcee("A"));
   const b = calculerScenario(projet.lignes, typologies, "B", forcee("B"));
-  proche(b.surfaceTotale, 966);
-  proche(b.ecoTotal, 136);
-  proche(b.cbsh, 136 / 966);
-  proche(b.parCategorie.bat.eco, 20);
-  proche(b.parCategorie.voi.eco, 11);
-  proche(b.parCategorie.ev.eco, 105);
-  proche(b.parCategorie.eau.eco, 0);                // catégorie présente, sans surface dans le scénario de base
-  const g = ecartScenarios(a, b);                   // gain = B − A : négatif, la base est moins bonne que la variante
-  proche(g.cbsh, 136 / 966 - 368.7 / 966);
-  proche(g.eco, -232.7);
+  proche(b.surfaceTotale, 966);                     // mêmes surfaces que A : seules les typologies changent
+  proche(b.ecoTotal, 368.7);
+  proche(b.cbsh, 368.7 / 966);
+  proche(b.parCategorie.bat.eco, 122.4);
+  proche(b.parCategorie.voi.eco, 21);
+  proche(b.parCategorie.ev.eco, 215.5);
+  proche(b.parCategorie.eau.eco, 9.8);
+  proche(b.parLigne.get(4).eco, 75.6);
+  const g = ecartScenarios(a, b);                   // gain = B − A : positif, la variante est meilleure que la base
+  proche(g.cbsh, 368.7 / 966 - 198.7 / 966);
+  proche(g.eco, 170);
 });
 
-test("modification d'une surface de A : la parcelle (= Σ) suit, le CBSh aussi", () => {
+test("projet d'exemple : surfaces communes à A et B, zone par zone", () => {
+  const somme = (cle, lignes) => lignes.reduce((t, n) => t + projet.lignes.find((l) => l.n === n).surfaces[cle], 0);
+  for (const z of zones.zones.filter((x) => x.type === "saisie")) {
+    assert.equal(somme("A", z.lignes), somme("B", z.lignes), `zone ${z.id} : surface différente entre A et B`);
+  }
+});
+
+test("modification d'une surface de B : la parcelle (= Σ) suit, le CBSh aussi", () => {
   const p = copie(projet);
-  p.lignes.find((l) => l.n === 3).surfaces.A = 100;       // 204 → 100 : −104 m² × 0,2 = −20,8 m² éco
-  const a = calculerScenario(p.lignes, typologies, "A");
+  p.lignes.find((l) => l.n === 3).surfaces.B = 100;       // 204 → 100 : −104 m² × 0,2 = −20,8 m² éco
+  const a = calculerScenario(p.lignes, typologies, "B");
   proche(a.ecoTotal, 368.7 - 20.8);
   proche(a.surfaceTotale, 862);
   proche(a.surfaceParcelle, 862);                          // dénominateur = Σ des surfaces
@@ -98,8 +107,8 @@ test("modification d'une surface de A : la parcelle (= Σ) suit, le CBSh aussi",
 
 test("surface de parcelle forcée supérieure à Σ : dénominateur forcé, part non comptée à 0", () => {
   const p = copie(projet);
-  p.lignes.find((l) => l.n === 3).surfaces.A = 100;
-  const a = calculerScenario(p.lignes, typologies, "A", 1000);
+  p.lignes.find((l) => l.n === 3).surfaces.B = 100;
+  const a = calculerScenario(p.lignes, typologies, "B", 1000);
   assert.equal(a.forcee, true);
   proche(a.surfaceParcelle, 1000);
   proche(a.nonComptee, 138);
@@ -108,7 +117,7 @@ test("surface de parcelle forcée supérieure à Σ : dénominateur forcé, part
 });
 
 test("surface de parcelle forcée inférieure à Σ : signalée, calcul maintenu sur la valeur forcée", () => {
-  const a = calculerScenario(projet.lignes, typologies, "A", 800);
+  const a = calculerScenario(projet.lignes, typologies, "B", 800);
   assert.equal(a.controle.conforme, false);
   proche(a.controle.ecart, 166);
   proche(a.cbsh, 368.7 / 800);
@@ -117,8 +126,8 @@ test("surface de parcelle forcée inférieure à Σ : signalée, calcul maintenu
 test("scénarios indépendants : A sur sa somme, B sur sa valeur forcée", () => {
   const a = calculerScenario(projet.lignes, typologies, "A");
   const b = calculerScenario(projet.lignes, typologies, "B", 1200);
-  proche(a.cbsh, 368.7 / 966);                             // sans forçage : Σ des surfaces de A (966 m²)
-  proche(b.cbsh, 136 / 1200);
+  proche(a.cbsh, 198.7 / 966);                             // sans forçage : Σ des surfaces de A (966 m²)
+  proche(b.cbsh, 368.7 / 1200);
 });
 
 test("cas limites : aucune surface, parcelle forcée nulle, typologie inconnue, surface négative", () => {
@@ -135,13 +144,13 @@ test("cas limites : aucune surface, parcelle forcée nulle, typologie inconnue, 
 
 test("lignes vides dans les deux scénarios : sans effet sur le calcul, détectables (suppression de ligne, 0.8.14)", () => {
   const p = copie(projet);
-  p.lignes.push({ n: 13, typologie: 27, precision: null, strates: ["herbacees"], surfaces: { A: 0, B: 0 }, zone: "bande-est", creee: true });
+  p.lignes.push({ n: 18, typologie: 27, precision: null, strates: ["herbacees"], surfaces: { A: 0, B: 0 }, zone: "bande-est", creee: true });
   assert.deepEqual(verifierDonnees(nomenclature, p, zones), []);
   const avant = calculerScenario(projet.lignes, typologies, "A");
   const apres = calculerScenario(p.lignes, typologies, "A");
   proche(apres.ecoTotal, avant.ecoTotal);
-  assert.deepEqual(p.lignes.filter((l) => Object.values(l.surfaces).every((v) => v === 0)).map((l) => l.n), [13]);
-  const a = calculerScenario(p.lignes.filter((l) => l.n !== 13), typologies, "A");
+  assert.deepEqual(p.lignes.filter((l) => Object.values(l.surfaces).every((v) => v === 0)).map((l) => l.n), [18]);
+  const a = calculerScenario(p.lignes.filter((l) => l.n !== 18), typologies, "A");
   proche(a.cbsh, avant.cbsh);                              // une fois la ligne retirée, rien ne change
 });
 
@@ -197,8 +206,8 @@ test("zones : toute ligne du projet d'exemple appartient à une zone ; la zone s
 
 test("zones : une ligne sans zone est signalée ; une ligne créée avec sa zone est acceptée", () => {
   const p = copie(projet);
-  p.lignes.push({ n: 13, typologie: 27, precision: null, strates: ["herbacees"], surfaces: { A: 0, B: 10 } });
-  assert.match(verifierDonnees(nomenclature, p, zones).join(" "), /Ligne 13 : aucune zone/);
+  p.lignes.push({ n: 18, typologie: 27, precision: null, strates: ["herbacees"], surfaces: { A: 0, B: 10 } });
+  assert.match(verifierDonnees(nomenclature, p, zones).join(" "), /Ligne 18 : aucune zone/);
   p.lignes.at(-1).zone = "bande-est"; p.lignes.at(-1).creee = true;
   assert.deepEqual(verifierDonnees(nomenclature, p, zones), []);
 });
@@ -346,12 +355,12 @@ test("CSV : une ligne par surface, synthèse cohérente avec le calcul", () => {
   const lignes = genererCsv(projet, nomenclature, res).trimEnd().split("\r\n");
   const colonnes = (l) => l.split(";");
   assert.equal(colonnes(lignes[0]).length, 11);
-  assert.match(lignes[0], /^N°;Catégorie;Typologie;Précision;Strates;Coefficient;Surface A — Variante « best » \(m²\)/);
+  assert.match(lignes[0], /^N°;Catégorie;Typologie;Précision;Strates;Coefficient;Surface A — Projet de base \(m²\)/);
   const donnees = lignes.slice(1, 1 + projet.lignes.length);
-  assert.equal(donnees.length, 12);
+  assert.equal(donnees.length, 17);
   assert.ok(donnees.every((l) => colonnes(l).length === 11 || l.includes('"')), "une ligne n'a pas 11 colonnes");
-  // Ligne 1 (A = 132, B = 200, coefficient 0) : surfaces, m² éco et écart
-  assert.deepEqual(colonnes(donnees[0]).slice(0, 1).concat(colonnes(donnees[0]).slice(-5)), ["1", "132", "0", "200", "0", "0"]);
+  // Ligne 1 (A = 132, B = 132, coefficient 0) : surfaces, m² éco et écart
+  assert.deepEqual(colonnes(donnees[0]).slice(0, 1).concat(colonnes(donnees[0]).slice(-5)), ["1", "132", "0", "132", "0", "0"]);
   // La somme des m² éco de la colonne A redonne le total du calcul
   const somme = donnees.reduce((t, l) => t + Number(colonnes(l)[7].replace(",", ".")), 0);
   proche(somme, res.A.ecoTotal, 0.01 * donnees.length);
@@ -439,16 +448,19 @@ test("lisibilité : aucun réglage dupliqué hors config.js (scénarios, bornes,
   }
 });
 
-// ================= 0.9.0 : cas de référence =================
+// ================= 0.9.0 : cas de référence (nouveaux scénarios en 0.9.1) =================
 // Projet d'exemple enregistré (data/projet_exemple.json) : Σ des surfaces = 966 m² dans A comme dans B, parcelle non forcée.
+// A = valeurs par défaut de la nomenclature ; B = typologies dessinées dans l'axonométrie ; mêmes surfaces zone par zone.
 // Valeurs de référence calculées à la main (surface × coefficient de la nomenclature), indépendamment du code :
-//   n° :        1    2     3     4     5    6     7     8     9     10    11    12
-//   coef. :     0    0,1   0,2   0,7   0    0,1   0,2   0,7   0,7   0,9   0,7   0,7
-//   A (m²) :  132    60   204   108    72   12    99    48     0   150    67    14   → m² éco 0 ; 6 ; 40,8 ; 75,6 ; 0 ; 1,2 ; 19,8 ; 33,6 ; 0 ; 135 ; 46,9 ; 9,8 = 368,7
-//   B (m²) :  200   200     0     0   306  110     0     0   150     0     0     0   → m² éco 0 ; 20 ; 0 ; 0 ; 0 ; 11 ; 0 ; 0 ; 105 ; 0 ; 0 ; 0 = 136
+//   n° :        1    2     3     4    13     5     6    14     7    15     8     9    10    11    16    12    17
+//   coef. :     0    0,1   0,2   0,7   0,1   0     0,1   0     0,2   0     0,7   0,7   0,9   0,7   0,3   0,7   0,2
+//   A (m²) :  132   264     0     0   108    72     0    12     0    99    48   150     0     0    67     0    14
+//     → m² éco 0 ; 26,4 ; 0 ; 0 ; 10,8 ; 0 ; 0 ; 0 ; 0 ; 0 ; 33,6 ; 105 ; 0 ; 0 ; 20,1 ; 0 ; 2,8 = 198,7
+//   B (m²) :  132    60   204   108     0    72    12     0    99     0    48     0   150    67     0    14     0
+//     → m² éco 0 ; 6 ; 40,8 ; 75,6 ; 0 ; 0 ; 1,2 ; 0 ; 19,8 ; 0 ; 33,6 ; 0 ; 135 ; 46,9 ; 0 ; 9,8 ; 0 = 368,7
 const REFERENCE = {
-  A: { surface: 966, eco: 368.7, cbsh: 368.7 / 966, parCategorie: { bat: 122.4, voi: 21, ev: 215.5, eau: 9.8 } },
-  B: { surface: 966, eco: 136, cbsh: 136 / 966, parCategorie: { bat: 20, voi: 11, ev: 105, eau: 0 } },
+  A: { surface: 966, eco: 198.7, cbsh: 198.7 / 966, parCategorie: { bat: 37.2, voi: 0, ev: 158.7, eau: 2.8 } },
+  B: { surface: 966, eco: 368.7, cbsh: 368.7 / 966, parCategorie: { bat: 122.4, voi: 21, ev: 215.5, eau: 9.8 } },
 };
 
 test("cas de référence : CBSh, m² éco et contributions par catégorie du projet d'exemple (calcul à la main)", () => {
@@ -461,17 +473,17 @@ test("cas de référence : CBSh, m² éco et contributions par catégorie du pro
     proche(res[cle].cbsh, attendu.cbsh, 1e-12);
     for (const [cat, eco] of Object.entries(attendu.parCategorie)) proche(res[cle].parCategorie[cat]?.eco ?? 0, eco, 1e-9);
   }
-  assert.equal(res.A.cbsh.toFixed(2), "0.38");
-  assert.equal(res.B.cbsh.toFixed(2), "0.14");
-  const gain = ecartScenarios(res.B, res.A);                       // B de référence, A cible : même sens que l'affichage (A − B)
-  proche(gain.eco, 232.7, 1e-9);
+  assert.equal(res.A.cbsh.toFixed(2), "0.21");
+  assert.equal(res.B.cbsh.toFixed(2), "0.38");
+  const gain = ecartScenarios(res.A, res.B);                       // A de référence, B cible : même sens que l'affichage (B − A)
+  proche(gain.eco, 170, 1e-9);
 });
 
 test("cas de référence : parcelle forcée à 1 000 m² (la part non saisie compte pour 0)", () => {
   const a = calculerScenario(projet.lignes, typologies, "A", 1000);
   const b = calculerScenario(projet.lignes, typologies, "B", 1000);
-  proche(a.cbsh, 0.3687, 1e-12);
-  proche(b.cbsh, 0.136, 1e-12);
+  proche(a.cbsh, 0.1987, 1e-12);
+  proche(b.cbsh, 0.3687, 1e-12);
   proche(a.nonComptee, 34, 1e-9);
   assert.equal(a.controle.conforme, true);
   assert.equal(calculerScenario(projet.lignes, typologies, "A", 900).controle.conforme, false);   // Σ = 966 > 900 : signalé

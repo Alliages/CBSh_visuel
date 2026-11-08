@@ -2,22 +2,27 @@
   "nom": "Projet d'exemple (valeurs illustratives)",
   "parcelle": { "largeur": 40, "profondeur": 25, "surface": 1000 },
   "scenarios": [
-    { "cle": "A", "nom": "Variante « best »", "surface_parcelle": null },
-    { "cle": "B", "nom": "Projet de base", "surface_parcelle": null }
+    { "cle": "A", "nom": "Projet de base", "surface_parcelle": null },
+    { "cle": "B", "nom": "Variante « best »", "surface_parcelle": null }
   ],
   "facade_vegetalisee": { "surface": 40, "precision": "Pignon est · treillage + grimpantes", "mentionnee": true },
   "lignes": [
-    { "n": 1, "typologie": 1, "precision": "Bitume, gravier, platelage", "strates": null, "surfaces": { "A": 132, "B": 200 } },
-    { "n": 2, "typologie": 2, "precision": "Sédum < 8 cm · biosolaire (PV)", "strates": ["sedum"], "surfaces": { "A": 60, "B": 200 } },
-    { "n": 3, "typologie": 3, "precision": "Substrat 9 à 12 cm · herbacées", "strates": ["herbacees"], "surfaces": { "A": 204, "B": 0 } },
-    { "n": 4, "typologie": 12, "precision": "Substrat > 60 cm · butte 30 → 80 cm", "strates": ["herbacees", "arbustes", "arbres"], "surfaces": { "A": 108, "B": 0 } },
-    { "n": 5, "typologie": 13, "precision": "Enrobé, dalles jointoyées", "strates": null, "surfaces": { "A": 72, "B": 306 } },
-    { "n": 6, "typologie": 14, "precision": "Stabilisé, graviers", "strates": null, "surfaces": { "A": 12, "B": 110 } },
-    { "n": 7, "typologie": 15, "precision": "Pavés à joints enherbés", "strates": null, "surfaces": { "A": 99, "B": 0 } },
-    { "n": 8, "typologie": 27, "precision": "Bande plantée, sans revêtement", "strates": ["herbacees"], "surfaces": { "A": 48, "B": 0 } },
-    { "n": 9, "typologie": 27, "precision": "1 strate", "strates": ["herbacees"], "surfaces": { "A": 0, "B": 150 } },
-    { "n": 10, "typologie": 29, "precision": "3 strates ≥ 20 % de la surface", "strates": ["herbacees", "arbustes", "arbres"], "surfaces": { "A": 150, "B": 0 } },
-    { "n": 11, "typologie": 23, "precision": "Substrat 31 à 80 cm · 3 strates", "strates": ["herbacees", "arbustes", "arbres"], "surfaces": { "A": 67, "B": 0 } },
-    { "n": 12, "typologie": 40, "precision": "Noue d'infiltration", "strates": null, "surfaces": { "A": 14, "B": 0 } }
+    { "n": 1, "typologie": 1, "precision": "Bitume, gravier, platelage", "strates": null, "surfaces": { "A": 132, "B": 132 } },
+    { "n": 2, "typologie": 2, "precision": "Sédum < 8 cm · biosolaire (PV) · valeur par défaut", "strates": ["sedum"], "surfaces": { "A": 264, "B": 60 } },
+    { "n": 3, "typologie": 3, "precision": "Substrat 9 à 12 cm · herbacées", "strates": ["herbacees"], "surfaces": { "A": 0, "B": 204 } },
+    { "n": 4, "typologie": 12, "precision": "Substrat > 60 cm · butte 30 → 80 cm", "strates": ["herbacees", "arbustes", "arbres"], "surfaces": { "A": 0, "B": 108 } },
+    { "n": 13, "typologie": 2, "precision": "Butte du plot · valeur par défaut (sédum)", "strates": ["sedum"], "surfaces": { "A": 108, "B": 0 } },
+    { "n": 5, "typologie": 13, "precision": "Enrobé, dalles jointoyées", "strates": null, "surfaces": { "A": 72, "B": 72 } },
+    { "n": 6, "typologie": 14, "precision": "Stabilisé, graviers", "strates": null, "surfaces": { "A": 0, "B": 12 } },
+    { "n": 14, "typologie": 13, "precision": "Place stabilisée · valeur par défaut", "strates": null, "surfaces": { "A": 12, "B": 0 } },
+    { "n": 7, "typologie": 15, "precision": "Pavés à joints enherbés", "strates": null, "surfaces": { "A": 0, "B": 99 } },
+    { "n": 15, "typologie": 13, "precision": "Cour pavée · valeur par défaut", "strates": null, "surfaces": { "A": 99, "B": 0 } },
+    { "n": 8, "typologie": 27, "precision": "Bande plantée, sans revêtement", "strates": ["herbacees"], "surfaces": { "A": 48, "B": 48 } },
+    { "n": 9, "typologie": 27, "precision": "1 strate", "strates": ["herbacees"], "surfaces": { "A": 150, "B": 0 } },
+    { "n": 10, "typologie": 29, "precision": "3 strates ≥ 20 % de la surface", "strates": ["herbacees", "arbustes", "arbres"], "surfaces": { "A": 0, "B": 150 } },
+    { "n": 11, "typologie": 23, "precision": "Substrat 31 à 80 cm · 3 strates", "strates": ["herbacees", "arbustes", "arbres"], "surfaces": { "A": 0, "B": 67 } },
+    { "n": 16, "typologie": 19, "precision": "Substrat < 30 cm · valeur par défaut", "strates": ["herbacees"], "surfaces": { "A": 67, "B": 0 } },
+    { "n": 12, "typologie": 40, "precision": "Noue d'infiltration", "strates": null, "surfaces": { "A": 0, "B": 14 } },
+    { "n": 17, "typologie": 37, "precision": "Bassin, réservoir · valeur par défaut", "strates": null, "surfaces": { "A": 14, "B": 0 } }
   ]
 }

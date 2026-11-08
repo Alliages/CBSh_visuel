@@ -9,7 +9,7 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [x] Représentation symbolique : une zone = une grande catégorie (la noue = toute la catégorie « eau »)
 - [x] Logo « Pousse » et favicons
 
-## Synthèse (état à la 0.9.0, version test)
+## Synthèse (état à la 0.9.1, version test)
 **Fonctionne** : calcul CBSh de deux scénarios (A, B) avec comparaison, vérifié sur un cas de référence ; Accueil (axonométrie cliquable, légendes à gauche et à droite, zones à 0 m² grisées, cartes de bascule) ; saisie par popups de zone et par tableau (ajout, suppression des lignes vides) ; noms de scénarios modifiables ; onglet Aide intégré ; sauvegarde automatique dans le navigateur ; export / import JSON ; export CSV pour Excel. Réglages regroupés dans `js/config.js`. 44 tests Node (calcul, cas de référence, données, validation, CSV, configuration).
 **Pour la 1.0** (première version annoncée et diffusée) : retours des testeurs de la 0.9.0 ; mise en page mobile (< 900 px) ; source du texte « végétalisation et photovoltaïque ».
 **Prochaine version technique (0.9.2)** : découper `app.js` (formats, étiquettes, popups, sauvegarde/import) et tester la logique pure extraite ; alléger l'axo.
@@ -32,9 +32,12 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [x] 0.8.17 corrections de l'audit : zone des lignes créées, import (parcelle forcée typée, surfaces bornées), politique de sécurité de contenu, grisage mémorisé, sauvegarde différée
 - [x] 0.8.18 lisibilité : `js/config.js`, variables en tête, lignes longues coupées, outils Python factorisés (`outils/constantes.py`)
 - [x] 0.9.0 version test : calcul vérifié sur cas de référence, aide corrigée (Σ ≤ parcelle) et complétée, arrondi commun des m² éco, plus de débordement horizontal dès 1 101 px
+- [x] 0.9.1 nouveaux scénarios d'exemple : A = valeurs par défaut (CBSh 0,206), B = variante « best » (0,382), mêmes surfaces par zone ; lignes 13 à 17 (valeurs par défaut)
 - [ ] 0.9.2 découpage de `app.js` en scripts (formats, étiquettes, popups, sauvegarde) et tests de la logique pure ; allègement de l'axo
 
 ## Idées / évolutions
+- [ ] **Vue du ciel à l'échelle** du projet créé dans l'application : plan 2D généré à partir des surfaces saisies (parcelle, emprise bâtie, zones par catégorie), en complément ou à la place de l'axonométrie symbolique (les surfaces restent modifiables, l'axo n'a pas de valeur d'échelle)
+- [ ] Une ligne = une seule typologie : changer de typologie sur une même surface oblige à déplacer la surface d'une ligne à l'autre (17 lignes dans l'exemple, dont la moitié à 0 m² dans chaque scénario). Étudier une typologie propre à chaque scénario pour une même ligne (lecture plus simple de l'Accueil et du tableau)
 - [x] Aide : mentionner la sauvegarde automatique, l'export CSV / JSON et l'import (menu « Projet »)
 - [x] Zone d'une ligne créée : `ligne.zone` prime sur les listes de `zones.json` (0.8.17, `zoneDeLigne` dans `calcul.js`)
 - [ ] Projet restauré : proposer de revenir à la version du site quand l'exemple change

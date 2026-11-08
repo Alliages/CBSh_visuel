@@ -10,7 +10,7 @@ Outil web gratuit de calcul et de comparaison du **CBSh** (coefficient de biotop
 
 - Version : voir `VERSION` · historique : `CHANGELOG.md` · suite : `ROADMAP.md`
 - Licence : GPL-3.0 (`LICENSE`)
-- **Version 0.9.0 : version test.** Les valeurs affichées au démarrage sont des données d'exemple. Retours bienvenus avant la première version annoncée (1.0).
+- **Version 0.9.1 : version test.** Les valeurs affichées au démarrage sont des données d'exemple. Retours bienvenus avant la première version annoncée (1.0).
 
 > Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, dans le cadre du projet Cap 2030 (nomenclature de septembre 2024). L'outil en ligne du CSTB est propriétaire : seule la méthode est reprise ici.
 

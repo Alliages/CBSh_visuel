@@ -1,5 +1,15 @@
 # Changelog — Outil CBSh
 
+## 0.9.1 — nouveaux scénarios d'exemple : A = valeurs par défaut, B = variante « best », mêmes surfaces
+- **Projet d'exemple refait sur les surfaces de l'axonométrie** : les deux scénarios ont désormais, zone par zone, les mêmes surfaces (Σ = 966 m² comptés ; la venelle dallée de 34 m² reste hors CBSh). Seules les typologies, donc les coefficients, changent. Avant, la base comptait 400 m² de toitures, 450 m² de voiries et 150 m² d'espaces verts, là où l'illustration en dessine 504, 231 et 217 (+ 14 m² d'eau) : les deux scénarios décrivaient deux projets différents.
+- **A = « Projet de base » = coefficients par défaut de la nomenclature** (ceux de « Je ne sais pas » : sédum 0,1 sur les toitures végétalisées, minérale imperméable 0 pour les voiries, pleine terre 1 strate 0,7, espace vert sur dalle < 30 cm 0,3, bassin 0,2). **CBSh 198,7 / 966 = 0,2057.**
+- **B = « Variante « best » » = typologies dessinées dans l'axonométrie** (inchangées depuis 0.9.0, ex-scénario A). **CBSh 368,7 / 966 = 0,3817.** Gain B − A : **+ 170,0 m² éco, + 0,176** (il était négatif, − 232,7, depuis l'échange des noms en 0.8.14).
+- **Cinq lignes ajoutées (n° 13 à 17)** : valeur par défaut des zones dont la variante change de typologie (butte du plot, place stabilisée, cour pavée, jardin sur dalle, noue). Une ligne porte une seule typologie : changer de typologie sur la même surface revient à déplacer la surface d'une ligne à l'autre. Ces lignes sont à 0 m² dans B, comme les lignes propres à B le sont dans A. La ligne 2 (sédum) porte les 264 m² de toiture extensive de la barre dans A (60 m² dans B).
+- `outils/generer_zones.py` : les cinq lignes sont rattachées à leurs zones, avec un repère propre (`ancres_m`) ; `data/zones.json` régénéré (seules les zones concernées changent).
+- **Tests** : 45, dont un nouveau (surfaces égales dans A et B, zone par zone) ; cas de référence recalculé à la main (tableau dans `outils/tests/test_calcul.mjs`) ; gain testé dans le sens B − A.
+- **Pied de page et README** : version 0.9.1.
+- **Inchangé** : code de l'application (`js/`), nomenclature, aide. Une sauvegarde locale existante dans le navigateur reste affichée à la place de l'exemple : menu « Projet » → « Revenir à l'exemple ».
+
 ## 0.9.0 — version test : l'outil fonctionne
 - **Calcul vérifié sur un cas de référence** : le projet d'exemple enregistré (Σ des surfaces = 966 m² dans A comme dans B). Valeurs calculées à la main, indépendamment du code, et inscrites dans les tests : A = 368,7 m² éco, CBSh 0,3817 ; B = 136 m² éco, CBSh 0,1408 ; contributions par catégorie (toitures, voiries, espaces verts, eau) et variante à parcelle forcée (1 000 m² : 0,3687 et 0,136 ; 34 m² non comptés ; dépassement signalé).
 - **Règle de la somme des surfaces harmonisée** : l'aide disait que la somme « doit être égale » à la parcelle, l'outil accepte Σ ≤ parcelle. Texte corrigé : la somme ne peut pas dépasser la surface de la parcelle ; la part non saisie compte pour 0 ; sans valeur, l'outil retient la somme des surfaces.
