@@ -10,6 +10,11 @@
 - **Mise en page** : sous 1 400 px, espaces et marges des onglets et des boutons de l'en-tête réduits (le sous-titre reste sur une ligne à 1 280 px) ; en-tête empilé (< 1 100 px) : le menu s'ouvre vers la droite.
 - **Technique** : nouveau fichier `js/projet_io.js` (sans accès au DOM : enveloppe de sauvegarde, validation, CSV, noms de fichiers), chargé entre `calcul.js` et `app.js`. Réglages en tête de chaque fichier. Tests Node : 33 (10 nouveaux : aller-retour, refus motivés, nettoyage, CSV, noms de fichiers, `index.html`).
 - **Limites** : la sauvegarde est propre à un navigateur et à une adresse (pas de partage entre appareils : passer par l'export JSON) ; elle est perdue si l'utilisateur vide les données du site ; en navigation privée stricte, l'état du menu signale que l'enregistrement est impossible. Un projet restauré ne suit plus les mises à jour de l'exemple (« Revenir à l'exemple »).
+- **Compléments (même version)** :
+  - **Démarrage sur le scénario A** : `SCENARIO_PAR_DEFAUT` passe de « B » à « A » (état initial de `index.html` aligné : cartes, sélecteurs, filigrane, fond). Une sauvegarde locale existante garde son scénario affiché.
+  - **Aide** : rubriques renommées (« Comment se calcule-t-il ? », « Les 4 catégories », « Utiliser l'outil ») ; la section des catégories reçoit 4 cartes aux couleurs de l'application (toitures, voiries, espaces verts, masses d'eau) avec fourchette de coefficients et coefficient par défaut.
+  - **Figure de la nomenclature** : `assets/aide_cbsh_nomenclature.svg` (palette du projet, pictogrammes dessinés pour l'outil) remplace la JPEG ; générée par `outils/generer_image_aide.py`.
+  - Tests Node : 34 (cartes de catégories, scénario par défaut ; image SVG).
 
 ## 0.8.15 — onglet Aide intégré
 - **Troisième onglet « Aide »** (après Accueil et Saisie) : page à sommaire fixe à gauche (6 rubriques : définition, calcul, nomenclature, règles de saisie, utilisation de l'outil, pour aller plus loin), sections en cartes à droite. Un clic dans le sommaire fait défiler jusqu'à la section ; la rubrique courante est repérée (la dernière en bas de page). Sous 1 100 px, le sommaire passe au-dessus du contenu. Lien profond `#aide` ; `aria-current` sur la rubrique courante.

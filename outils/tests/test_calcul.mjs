@@ -239,7 +239,7 @@ test("zones : une ligne en double dans deux zones ou de mauvaise catégorie est 
 // ================= Aide (0.8.15) =================
 test("aide : l'image de la nomenclature existe, et l'onglet et ses sections sont dans index.html", () => {
   const html = readFileSync(new URL("../../index.html", import.meta.url), "utf-8");
-  assert.ok(existsSync(new URL("../../assets/aide_cbsh_nomenclature.jpg", import.meta.url)), "image absente");
+  assert.ok(existsSync(new URL("../../assets/aide_cbsh_nomenclature.svg", import.meta.url)), "image absente");
   assert.match(html, /id="onglet-aide"[^>]*aria-controls="panneau-aide"/);
   assert.match(html, /id="panneau-aide"/);
   assert.equal(html.match(/<div[\s>]/g).length, html.match(/<\/div>/g).length, "balises <div> déséquilibrées");
@@ -251,6 +251,11 @@ test("aide : l'image de la nomenclature existe, et l'onglet et ses sections sont
   assert.equal(cibles.length, 6);
   for (const id of cibles) assert.ok(html.includes(`id="${id}"`), `section ${id} absente`);
   assert.match(readFileSync(new URL("../../js/app.js", import.meta.url), "utf-8"), /const ONGLETS = \["accueil", "saisie", "aide"\]/);
+  assert.equal(html.match(/class="aide-cat aide-cat--/g).length, 4, "les 4 cartes de catégories");
+});
+
+test("scénario affiché au chargement : A", () => {
+  assert.match(readFileSync(new URL("../../js/app.js", import.meta.url), "utf-8"), /const SCENARIO_PAR_DEFAUT = "A";/);
 });
 
 // ================= Sauvegarde, import et export (0.8.16) =================

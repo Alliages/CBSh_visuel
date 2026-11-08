@@ -31,7 +31,7 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [x] 0.8.13 retours 0.8.12 : étiquettes de toutes les lignes, popup 2 colonnes, bascule par les cartes, fonds par scénario, toute ligne dans une zone
 - [x] 0.8.14 retours 0.8.13 : légendes à gauche et à droite et cliquables, zones à 0 m² grisées, noms de scénarios modifiables, suppression des lignes vides, parcelle non forcée
 - [x] 0.8.15 onglet Aide intégré (sommaire fixe, texte et figure de l'aide fournie)
-- [x] 0.8.16 sauvegarde locale (noms de scénarios compris) + export CSV/JSON
+- [x] 0.8.16 sauvegarde locale (noms de scénarios compris) + export CSV/JSON ; aide refaite (4 catégories, figure SVG aux couleurs de l'app) ; démarrage sur le scénario A
 - [ ] 0.9 outil fonctionnel, calcul vérifié sur cas de référence
 
 ## Idées / évolutions
@@ -49,7 +49,6 @@ Décisions de conception et spécification détaillée : voir `claude/PASSATION_
 - [ ] Grisage des zones à 0 m² : un arbre qui déborde sur une zone voisine est coupé net au contour de la zone (ex. arbre du jardin sur dalle)
 - [ ] Mise en page : débordement horizontal de 17 px à 1280 px de large (cartes de chiffres clés de l'Accueil, déjà présent en 0.8.13)
 - [ ] Noms de scénarios : choix du nom abrégé de la coupe (aujourd'hui nom tronqué à 14 caractères)
-- [ ] Le scénario affiché au chargement est B (désormais « Projet de base ») : décider si la variante doit s'afficher en premier
 - [ ] Message de confirmation après validation (« … modifiée dans B »)
 - [ ] Confirmation si changement de scénario avec une popup ouverte
 - [ ] Case « Appliquer aussi à A » dans la popup (décochée par défaut)

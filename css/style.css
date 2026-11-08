@@ -557,6 +557,18 @@ a { color: inherit; }
 .aide-figure a { display: block; }
 .aide-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--celadon); border-radius: 16px; }
 .aide-figure figcaption { margin-top: 8px; font-size: 13px; font-weight: 500; color: var(--gris); }
+/* Cartes des 4 catégories (couleurs --cat-*) */
+.aide-categories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 0 14px; }
+.aide-cat { --couleur: var(--gris); display: flex; gap: 14px; padding: 14px 16px; border: 1px solid var(--gris-clair); border-radius: 14px; }
+.aide-cat--bat { --couleur: var(--cat-bat); }
+.aide-cat--voi { --couleur: var(--cat-voi); }
+.aide-cat--ev { --couleur: var(--cat-ev); }
+.aide-cat--eau { --couleur: var(--cat-eau); }
+.aide-cat-barre { flex: none; width: 8px; border-radius: 4px; background: var(--couleur); }
+.aide-cat h3 { display: inline; margin: 0; font-size: 15px; font-weight: 700; }
+.aide-pastille { display: inline-block; margin-left: 6px; padding: 1px 9px; border-radius: 999px; background: color-mix(in srgb, var(--couleur) 28%, #fff); font-size: 11px; font-weight: 700; }
+.aide-section .aide-cat p { margin: 4px 0 0; font-size: 13px; color: var(--gris); }
+.aide-section .aide-cat p.aide-defaut { color: var(--jet); font-weight: 600; }
 .aide-regles { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .aide-regles li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border-radius: 14px; background: var(--gris-champ); font-size: 15px; font-weight: 500; line-height: 1.5; }
 .aide-num { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 2px; border: 1.2px solid var(--jet); border-radius: 50%; background: var(--or); font-size: 12px; font-weight: 800; }
@@ -568,7 +580,7 @@ a { color: inherit; }
   .aide-page { grid-template-columns: minmax(0, 1fr); }
   .aide-sommaire { position: static; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 16px; }
   .aide-sommaire .titre-carte { flex-basis: 100%; margin-bottom: 4px; }
-  .aide-exemples { grid-template-columns: minmax(0, 1fr); }
+  .aide-exemples, .aide-categories { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ============================== Pied de page ============================== */

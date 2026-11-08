@@ -12,7 +12,7 @@
 <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-scenario="A">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="p-sedum" viewBox="-10 -13 20 24"><g fill="currentColor"><circle cx="-4" cy="3" r="3.4"/><circle cx="4" cy="3" r="3.4"/><circle cx="0" cy="-3" r="3.4"/></g></symbol>
@@ -67,8 +67,8 @@
 <div id="panneau-accueil" class="panneau" role="tabpanel" aria-labelledby="onglet-accueil">
 
   <div class="rangee-kpi">
-    <article class="carte carte--bascule kpi inactif" id="kpi-A" aria-label="Scénario A">
-      <button type="button" class="carte-bascule" data-scenario="A" aria-pressed="false" aria-label="Scénario A : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+    <article class="carte carte--bascule kpi carte--actif" id="kpi-A" aria-label="Scénario A">
+      <button type="button" class="carte-bascule actif" data-scenario="A" aria-pressed="true" aria-label="Scénario A : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
       <div class="kpi-gauche">
         <div class="scen-tete"><span class="lettre lettre-a lettre--l" aria-hidden="true">A</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
         <div>
@@ -86,8 +86,8 @@
       <p class="gain-valeur" id="gain-valeur"></p>
       <p class="gain-m2" id="gain-m2"></p>
     </article>
-    <article class="carte carte--bascule kpi carte--actif" id="kpi-B" aria-label="Scénario B">
-      <button type="button" class="carte-bascule actif" data-scenario="B" aria-pressed="true" aria-label="Scénario B : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+    <article class="carte carte--bascule kpi inactif" id="kpi-B" aria-label="Scénario B">
+      <button type="button" class="carte-bascule" data-scenario="B" aria-pressed="false" aria-label="Scénario B : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
       <div class="kpi-gauche">
         <div class="scen-tete"><span class="lettre lettre-b lettre--l" aria-hidden="true">B</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
         <div>
@@ -116,14 +116,14 @@
         <button type="button" class="bouton-aff" aria-pressed="false" aria-disabled="true" tabindex="-1" title="Modes d'affichage : à venir">Coef.</button>
       </div>
       <div class="selecteur" role="group" aria-label="Scénario actif">
-  <button type="button" class="seg" aria-pressed="false" data-scenario="A"><span class="lettre lettre-a" aria-hidden="true">A</span><span data-nom-scenario="A">Variante « best »</span></button>
-  <button type="button" class="seg actif" aria-pressed="true" data-scenario="B"><span class="lettre lettre-b" aria-hidden="true">B</span><span data-nom-scenario="B">Projet de base</span></button>
+  <button type="button" class="seg actif" aria-pressed="true" data-scenario="A"><span class="lettre lettre-a" aria-hidden="true">A</span><span data-nom-scenario="A">Variante « best »</span></button>
+  <button type="button" class="seg" aria-pressed="false" data-scenario="B"><span class="lettre lettre-b" aria-hidden="true">B</span><span data-nom-scenario="B">Projet de base</span></button>
 </div>
     </header>
 
     <div class="plan-wrap">
       <div class="plan-stage">
-        <span class="filigrane" aria-hidden="true">B</span>
+        <span class="filigrane" aria-hidden="true">A</span>
         <img class="axo" src="assets/axo.svg" width="920" height="840" alt="Axonométrie du projet : un bâtiment en L avec toitures végétalisées, cour pavée, jardin, noue et parking.">
         <svg class="zones" id="zones" viewBox="290 78 920 840" role="group" aria-label="Zones de l'illustration : cliquer pour saisir une surface"></svg>
         <svg class="liens" id="liens" viewBox="0 0 1370 703" aria-hidden="true"></svg>
@@ -145,8 +145,8 @@
 <div id="panneau-saisie" class="panneau" role="tabpanel" aria-labelledby="onglet-saisie" hidden>
 
   <div class="rangee-saisie">
-<article class="carte carte--bascule scen-saisie inactif" id="saisie-A" aria-label="Scénario A">
-      <button type="button" class="carte-bascule" data-scenario="A" aria-pressed="false" aria-label="Scénario A : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+<article class="carte carte--bascule scen-saisie carte--actif" id="saisie-A" aria-label="Scénario A">
+      <button type="button" class="carte-bascule actif" data-scenario="A" aria-pressed="true" aria-label="Scénario A : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
       <div class="scen-tete"><span class="lettre lettre-a lettre--l" aria-hidden="true">A</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
       <p class="kpi-valeur kpi-valeur--m"><span class="grand"></span></p>
       <p class="kpi-detail"></p>
@@ -161,16 +161,16 @@
           <p class="sous-carte">Une tranche du projet · n° = ligne du tableau</p>
         </div>
         <div class="selecteur selecteur--court" role="group" aria-label="Scénario actif">
-  <button type="button" class="seg" aria-pressed="false" data-scenario="A"><span class="lettre lettre-a" aria-hidden="true">A</span><span data-nom-court="A">Variante « best »</span></button>
-  <button type="button" class="seg actif" aria-pressed="true" data-scenario="B"><span class="lettre lettre-b" aria-hidden="true">B</span><span data-nom-court="B">Projet de base</span></button>
+  <button type="button" class="seg actif" aria-pressed="true" data-scenario="A"><span class="lettre lettre-a" aria-hidden="true">A</span><span data-nom-court="A">Variante « best »</span></button>
+  <button type="button" class="seg" aria-pressed="false" data-scenario="B"><span class="lettre lettre-b" aria-hidden="true">B</span><span data-nom-court="B">Projet de base</span></button>
 </div>
       </header>
       <div class="coupe-cadre">
         <img src="assets/coupe_tranche.svg" width="1014" height="468" loading="lazy" alt="Coupe de principe du projet : bâtiments, sols et noue, avec les numéros des lignes du tableau.">
       </div>
     </section>
-<article class="carte carte--bascule scen-saisie carte--actif" id="saisie-B" aria-label="Scénario B">
-      <button type="button" class="carte-bascule actif" data-scenario="B" aria-pressed="true" aria-label="Scénario B : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+<article class="carte carte--bascule scen-saisie inactif" id="saisie-B" aria-label="Scénario B">
+      <button type="button" class="carte-bascule" data-scenario="B" aria-pressed="false" aria-label="Scénario B : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
       <div class="scen-tete"><span class="lettre lettre-b lettre--l" aria-hidden="true">B</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
       <p class="kpi-valeur kpi-valeur--m"><span class="grand"></span></p>
       <p class="kpi-detail"></p>
@@ -188,7 +188,7 @@
     </header>
 
     <div class="tableau-defil">
-      <div class="tableau" id="tableau-saisie" data-actif="B" role="table" aria-label="Occupation des sols, scénarios A et B">
+      <div class="tableau" id="tableau-saisie" data-actif="A" role="table" aria-label="Occupation des sols, scénarios A et B">
         <div class="zone">
           <div class="tete-groupes" aria-hidden="true">
             <div class="groupe-a"><span class="puce">Scénario A</span><span class="ro"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="5.5" width="9" height="6" rx="1.2" fill="currentColor"/><path d="M3.5 5.5v-2a2.5 2.5 0 0 1 5 0v2"/></svg>lecture seule</span></div>
@@ -244,10 +244,10 @@
     <nav class="carte aide-sommaire" aria-label="Sommaire de l'aide">
       <h2 class="titre-carte">Aide</h2>
       <button type="button" class="aide-lien actif" data-aide-section="aide-definition">Qu'est-ce que le CBSh ?</button>
-      <button type="button" class="aide-lien" data-aide-section="aide-calcul">Comment il se calcule</button>
-      <button type="button" class="aide-lien" data-aide-section="aide-nomenclature">La nomenclature</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-calcul">Comment se calcule-t-il ?</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-nomenclature">Les 4 catégories</button>
       <button type="button" class="aide-lien" data-aide-section="aide-regles">Règles de saisie</button>
-      <button type="button" class="aide-lien" data-aide-section="aide-outil">Dans cet outil</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-outil">Utiliser l'outil</button>
       <button type="button" class="aide-lien" data-aide-section="aide-plus">Pour aller plus loin</button>
     </nav>
 
@@ -260,7 +260,7 @@
       </section>
 
       <section class="carte aide-section" id="aide-calcul" aria-labelledby="titre-aide-calcul">
-        <h2 id="titre-aide-calcul">Comment il se calcule</h2>
+        <h2 id="titre-aide-calcul">Comment se calcule-t-il ?</h2>
         <p>Chaque surface est multipliée par le coefficient de sa typologie (de 0 à 1). On additionne le tout, puis on divise par la surface de la parcelle.</p>
         <p class="aide-formule">CBSh = Σ (surface × coefficient) ÷ surface de la parcelle</p>
         <ul class="aide-exemples" aria-label="Exemples de calcul">
@@ -272,11 +272,33 @@
       </section>
 
       <section class="carte aide-section" id="aide-nomenclature" aria-labelledby="titre-aide-nomenclature">
-        <h2 id="titre-aide-nomenclature">La nomenclature</h2>
-        <p>Les surfaces se classent en grandes familles : toitures, toitures végétalisées, voiries, espaces verts et masses d’eau. La nomenclature compte aujourd’hui 41 typologies, assez pour décrire la diversité des paysages urbains.</p>
+        <h2 id="titre-aide-nomenclature">Les 4 catégories</h2>
+        <div class="aide-categories">
+          <div class="aide-cat aide-cat--bat"><span class="aide-cat-barre"></span><div>
+            <h3>Toitures</h3><span class="aide-pastille">coef. 0 à 0,7</span>
+            <p>Classique, extensive, semi-intensive, intensive</p>
+            <p class="aide-defaut">Par défaut : 0,1 (extensive sédum)</p>
+          </div></div>
+          <div class="aide-cat aide-cat--voi"><span class="aide-cat-barre"></span><div>
+            <h3>Voiries</h3><span class="aide-pastille">coef. 0 à 0,3</span>
+            <p>Imperméable, semi-perméable, mixte, avec arbres</p>
+            <p class="aide-defaut">Par défaut : 0 (imperméable)</p>
+          </div></div>
+          <div class="aide-cat aide-cat--ev"><span class="aide-cat-barre"></span><div>
+            <h3>Espaces verts au sol</h3><span class="aide-pastille">coef. 0,3 à 1</span>
+            <p>Sur dalle, pleine terre, agricole, naturel</p>
+            <p class="aide-defaut">Par défaut : 0,7 (pleine terre)</p>
+          </div></div>
+          <div class="aide-cat aide-cat--eau"><span class="aide-cat-barre"></span><div>
+            <h3>Masses d’eau</h3><span class="aide-pastille">coef. 0,2 à 1</span>
+            <p>Bassin, milieu humide, noue d’infiltration, fossé</p>
+            <p class="aide-defaut">Par défaut : 0,2 (bassin)</p>
+          </div></div>
+        </div>
+        <p>La nomenclature compte aujourd’hui 41 typologies, assez pour décrire la diversité des paysages urbains.</p>
         <figure class="aide-figure">
-          <a href="assets/aide_cbsh_nomenclature.jpg" target="_blank" rel="noopener">
-            <img src="assets/aide_cbsh_nomenclature.jpg" width="1280" height="863" loading="lazy"
+          <a href="assets/aide_cbsh_nomenclature.svg" target="_blank" rel="noopener">
+            <img src="assets/aide_cbsh_nomenclature.svg" width="1280" height="780" loading="lazy"
                  alt="Les grandes familles du CBSh et leurs coefficients : toits 0 ; toitures végétalisées de 0,1 (extensive) à 0,7 (intensive) ; voiries de 0 (minéral) à 0,3 (mixte) ; espaces verts de 0,3 (sur dalle) à 1 (naturel) ; masses d’eau de 0,2 (bassin) à 1 (milieu humide).">
           </a>
           <figcaption>Familles de surfaces et fourchettes de coefficients. Cliquer pour agrandir.</figcaption>
@@ -294,7 +316,7 @@
       </section>
 
       <section class="carte aide-section" id="aide-outil" aria-labelledby="titre-aide-outil">
-        <h2 id="titre-aide-outil">Dans cet outil</h2>
+        <h2 id="titre-aide-outil">Utiliser l'outil</h2>
         <p>Vous comparez deux scénarios d’un même projet, A et B ; un clic sur le nom d’un scénario, dans sa carte, permet de le renommer. Cliquez sur une zone du plan ou sur une étiquette pour saisir ses surfaces, ou utilisez l’onglet « Saisie et détails » pour le tableau complet. Une ligne vide dans les deux scénarios peut y être supprimée (✕). Le gain entre A et B s’affiche en points de CBSh.</p>
       </section>
 
