@@ -1,0 +1,8 @@
+{
+  "name": "cbsh_visuel",
+  "private": true,
+  "description": "CBSh visuel : site statique, aucune dépendance. Ce fichier ne sert qu'à lancer les tests.",
+  "scripts": {
+    "test": "node --test outils/tests/test_calcul.mjs"
+  }
+}

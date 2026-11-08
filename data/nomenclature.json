@@ -1,0 +1,600 @@
+{
+  "titre": "Nomenclature du Coefficient de Biotope Surfacique harmonisé (CBSh) — version de septembre 2024",
+  "version": "septembre 2024",
+  "mention": "Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, dans le cadre du projet Cap 2030.",
+  "categories": [
+    {
+      "cle": "bat",
+      "libelle": "Bâtiments — toitures",
+      "court": "Toitures"
+    },
+    {
+      "cle": "voi",
+      "libelle": "Voiries",
+      "court": "Voiries"
+    },
+    {
+      "cle": "ev",
+      "libelle": "Espaces verts au sol",
+      "court": "Espaces verts au sol"
+    },
+    {
+      "cle": "eau",
+      "libelle": "Masses d'eau",
+      "court": "Masses d'eau"
+    }
+  ],
+  "strates": [
+    {
+      "cle": "sedum",
+      "libelle": "Sédum"
+    },
+    {
+      "cle": "herbacees",
+      "libelle": "Herbacées"
+    },
+    {
+      "cle": "arbustes",
+      "libelle": "Arbustes"
+    },
+    {
+      "cle": "arbres",
+      "libelle": "Arbres"
+    }
+  ],
+  "typologies": [
+    {
+      "id": 1,
+      "categorie": "bat",
+      "libelle": "Toiture classique",
+      "condition": "Gravier, métal, tuile, asphalte…",
+      "coef": 0.0,
+      "defaut": false,
+      "strates": null,
+      "description": "Toiture gravier, métallique, en tuile, en asphalte, etc."
+    },
+    {
+      "id": 2,
+      "categorie": "bat",
+      "libelle": "Toiture extensive −",
+      "condition": "Substrat < 8 cm · sédum",
+      "coef": 0.1,
+      "defaut": true,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "sedum"
+        ]
+      },
+      "description": "Les épaisseurs proposées correspondent aux épaisseurs de substrat seule, hors couche drainante.\n\nLes sédums correspondent à des plantes grasses à faible développement racinaire\n\nLes herbacées correspondent à des plantes non ligneuses, dont le cycle de vie est généralement court (graminées, trèfles, asters, etc.)\n\nLes arbustes correspondent à des plantes ligneuses dont la hauteur est inférieure à 7 m (lavande, romarin, chèvrefeuille, charme, sauge, aubépine, etc.)\nLes arbres correspondent à des plantes ligneuses dont la hauteur est supérieure à 7 m (érables, tilleuls, platanes, étable, marronniers, sophoras, etc.)",
+      "regle": "Pour que la strate \"arbustive\" soit effective, elle doit couvrir au minimum 20 % de la toiture\nPour que la strate \"arborée\" soit effective, elle doit couvrir au minimum 20 % de la toiture"
+    },
+    {
+      "id": 3,
+      "categorie": "bat",
+      "libelle": "Toiture extensive +",
+      "condition": "Substrat 9 à 12 cm · herbacées",
+      "coef": 0.2,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "categorie": "bat",
+      "libelle": "Toiture extensive +",
+      "condition": "Substrat 9 à 12 cm · herbacées + arbustes",
+      "coef": 0.3,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "categorie": "bat",
+      "libelle": "Toiture semi-intensive",
+      "condition": "Substrat 13 à 30 cm · 1 strate",
+      "coef": 0.3,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes"
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "categorie": "bat",
+      "libelle": "Toiture semi-intensive",
+      "condition": "Substrat 13 à 30 cm · 2 strates",
+      "coef": 0.4,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "categorie": "bat",
+      "libelle": "Toiture intensive −",
+      "condition": "Substrat 31 à 60 cm · 1 strate",
+      "coef": 0.4,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "categorie": "bat",
+      "libelle": "Toiture intensive −",
+      "condition": "Substrat 31 à 60 cm · 2 strates",
+      "coef": 0.5,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "categorie": "bat",
+      "libelle": "Toiture intensive −",
+      "condition": "Substrat 31 à 60 cm · 3 strates",
+      "coef": 0.6,
+      "defaut": false,
+      "strates": {
+        "nombre": 3,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "categorie": "bat",
+      "libelle": "Toiture intensive +",
+      "condition": "Substrat > 60 cm · 1 strate",
+      "coef": 0.5,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "categorie": "bat",
+      "libelle": "Toiture intensive +",
+      "condition": "Substrat > 60 cm · 2 strates",
+      "coef": 0.6,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "categorie": "bat",
+      "libelle": "Toiture intensive +",
+      "condition": "Substrat > 60 cm · 3 strates",
+      "coef": 0.7,
+      "defaut": false,
+      "strates": {
+        "nombre": 3,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "categorie": "voi",
+      "libelle": "Minérale imperméable",
+      "condition": "Béton, asphalte, enrobé, dalles jointoyées…",
+      "coef": 0.0,
+      "defaut": true,
+      "strates": null,
+      "description": "Surfaces complètement scellées avec des revêtements imperméables à l'air et/ou à l'eau, ne permettant pas le développement de la végétation : béton, asphalte, terrazzo, céramique, dalles/pavage (avec sous-structure ou jointoiement), revêtements plastiques étanches, bitume, dallage avec couche de mortier...\nLes friches imperméables sont à classer dans cette catégorie."
+    },
+    {
+      "id": 14,
+      "categorie": "voi",
+      "libelle": "Semi-perméable",
+      "condition": "Pavés, graviers, stabilisé…",
+      "coef": 0.1,
+      "defaut": false,
+      "strates": null,
+      "description": "Matériaux partiellement ou totalement perméables à l'air et à l'eau ne permettant pas le développement de la végétation : grands et petits pavés en pierre, clinker, dallage en bois, pierres et dalles composites en béton, plafonds hydrodiluables, sol compacté ouvert, surfaces synthétiques perméables, pierres en treillis avec jointure, pavés de suintement, pierres de drainage, pavés à très haute performance de suintement, zones sablonneuses, graviers, parking en terre battue ou tout venant ou caillou...\nLes friches semi-perméables et perméables sont à classer dans cette catégorie."
+    },
+    {
+      "id": 15,
+      "categorie": "voi",
+      "libelle": "Mixte",
+      "condition": "Pavés à gazon, joints enherbés…",
+      "coef": 0.2,
+      "defaut": false,
+      "strates": null,
+      "description": "Matériaux perméables à l'air et à l'eau permettant le développement de la végétation : pavés à gazon, gravier à gazon, pavage en bois à forte proportion de joints, pavage à joints de gazon, grilles à gazon, pavés à gazon"
+    },
+    {
+      "id": 16,
+      "categorie": "voi",
+      "libelle": "Minérale imperméable avec arbres",
+      "condition": "> 2 arbres / 100 m²",
+      "coef": 0.1,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "arbres"
+        ]
+      },
+      "description": "Se référer aux descriptions précédentes",
+      "regle": "Pour que ces typologies d'occupation des sols soient validées, la densité d'arbres doit être supérieure à 2 individus/100m². Si cette condition n'est pas respectée, le milieu est considéré \"sans arbre\"."
+    },
+    {
+      "id": 17,
+      "categorie": "voi",
+      "libelle": "Semi-perméable avec arbres",
+      "condition": "> 2 arbres / 100 m²",
+      "coef": 0.2,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "categorie": "voi",
+      "libelle": "Mixte avec arbres",
+      "condition": "> 2 arbres / 100 m²",
+      "coef": 0.3,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat < 30 cm · 1 strate",
+      "coef": 0.3,
+      "defaut": true,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes"
+        ]
+      },
+      "description": "Les herbacées correspondent à des plantes non ligneuses, dont le cycle de vie est généralement court (graminées, trèfles, asters, etc.)\n\nLes arbustes correspondent à des plantes ligneuses dont la hauteur est inférieure à 7 m (lavande, romarin, chèvrefeuille, charme, sauge, aubépine, etc.)\n\nLes arbres correspondent à des plantes ligneuses dont la hauteur est supérieure à 7 m (érables, tilleuls, platanes, étable, marronniers, sophoras, etc.)\n\nExemples : jardin sur parking sous-terrain, jardin potager sur dalle, en bacs ou en pots…",
+      "regle": "Pour que la strate \"arbustive\" soit effective, elle doit couvrir au minimum 20 % de l'espace vert\nPour que la strate \"arborée\" soit effective, elle doit couvrir au minimum 20 % de l'espace vert"
+    },
+    {
+      "id": 20,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat < 30 cm · 2 strates",
+      "coef": 0.4,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes"
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat 31 à 80 cm · 1 strate",
+      "coef": 0.4,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat 31 à 80 cm · 2 strates",
+      "coef": 0.5,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat 31 à 80 cm · 3 strates",
+      "coef": 0.7,
+      "defaut": false,
+      "strates": {
+        "nombre": 3,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat > 81 cm · 1 strate",
+      "coef": 0.5,
+      "defaut": false,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat > 81 cm · 2 strates",
+      "coef": 0.6,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "categorie": "ev",
+      "libelle": "Espace vert sur dalle",
+      "condition": "Substrat > 81 cm · 3 strates",
+      "coef": 0.8,
+      "defaut": false,
+      "strates": {
+        "nombre": 3,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "categorie": "ev",
+      "libelle": "Pleine terre",
+      "condition": "1 strate",
+      "coef": 0.7,
+      "defaut": true,
+      "strates": {
+        "nombre": 1,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      },
+      "description": "La pleine terre répond aux conditions cumulatives suivantes :\n• Sa surface est libre de tout revêtement même perméable. Les sols présentant en surface des dalles en béton poreux, des dalles à joints larges, des pavés non jointés, des structures alvéolaires végétalisées et perméables, etc. ne sont donc pas considérés comme des sols de pleine terre ;\n• Elle présente une succession d’horizons, dont un horizon plus organique en surface et une profondeur variable ;\n• Elle est végétalisée ;\n• Elle n’est pas interrompue en profondeur par une interface imperméable anthropique (dalles, niveaux compactés, indurés, membrane, …). Le passage de réseaux (câbles, canalisations, …) en profondeur ne s’oppose pas au statut de pleine terre ;\n• Elle est constituée majoritairement de matériaux terreux : ce sont des matériaux d’origine pédologique ou géologique, le plus souvent mélangés, et de granulométrie fine (< 2 mm), avec parfois une faible charge en éléments grossiers.\n\nPour les espaces verts en pleine terre composés d'une seule strate arborescente (avec un sol couvert de graviers par exemple), se référer aux surfaces minérales ou mixtes avec arbres\n\nExemples : surface boisée, friche naturelle (espace laissé en libre évolution depuis plusieurs décenies, parcs urbains, dent creuse, jardin portager en pleine terre..",
+      "regle": "Pour que la strate \"arbustive\" soit effective, elle doit couvrir au minimum 20 % de l'espace vert\nPour que la strate \"arborée\" soit effective, elle doit couvrir au minimum 20 % de l'espace vert"
+    },
+    {
+      "id": 28,
+      "categorie": "ev",
+      "libelle": "Pleine terre",
+      "condition": "2 strates",
+      "coef": 0.8,
+      "defaut": false,
+      "strates": {
+        "nombre": 2,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "categorie": "ev",
+      "libelle": "Pleine terre",
+      "condition": "3 strates",
+      "coef": 0.9,
+      "defaut": false,
+      "strates": {
+        "nombre": 3,
+        "parmi": [
+          "herbacees",
+          "arbustes",
+          "arbres"
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "categorie": "ev",
+      "libelle": "Espace agricole",
+      "condition": "Grande culture",
+      "coef": 0.6,
+      "defaut": true,
+      "strates": null,
+      "description": "Champ monospécifique (blés, maïs, etc.) pouvant correspondre aux systèmes agricoles intensifs"
+    },
+    {
+      "id": 31,
+      "categorie": "ev",
+      "libelle": "Espace agricole",
+      "condition": "Pré et pâture",
+      "coef": 0.7,
+      "defaut": false,
+      "strates": null,
+      "description": "Terres agricoles (végétation herbacées) dédiées à l'alimentation du bétail"
+    },
+    {
+      "id": 32,
+      "categorie": "ev",
+      "libelle": "Espace agricole",
+      "condition": "Prairie temporaire",
+      "coef": 0.8,
+      "defaut": false,
+      "strates": null,
+      "description": "Zone de culture polyspécifique (plantes fourragères de type graminées et légumineuses) établie pour une période limitée (souvent inférieure à 5 ans). Peut correspondre aux systèmes agricoles extensifs"
+    },
+    {
+      "id": 33,
+      "categorie": "ev",
+      "libelle": "Espace agricole",
+      "condition": "Friche agricole < 5 ans",
+      "coef": 0.7,
+      "defaut": false,
+      "strates": null,
+      "description": "Résultat de la déprise agricole de moins de 5 ans : milieu composé d'herbacées et d'arbustes (ronces)"
+    },
+    {
+      "id": 34,
+      "categorie": "ev",
+      "libelle": "Espace agricole",
+      "condition": "Friche agricole > 5 ans",
+      "coef": 0.8,
+      "defaut": false,
+      "strates": null,
+      "description": "Résultat de la déprise agricole de plus de 5 ans : milieu composé en majorité de ligneux"
+    },
+    {
+      "id": 35,
+      "categorie": "ev",
+      "libelle": "Prairie permanente",
+      "condition": "Zone herbacée de longue durée",
+      "coef": 0.9,
+      "defaut": false,
+      "strates": null,
+      "description": "Zone herbacée qui reste en place pendant de longues périodes (souvent plusieurs décennies), peu ou pas travaillé, sans présence de bétails"
+    },
+    {
+      "id": 36,
+      "categorie": "ev",
+      "libelle": "Espace naturel",
+      "condition": "Forêts, prairies, dunes, zones humides…",
+      "coef": 1.0,
+      "defaut": false,
+      "strates": null,
+      "description": "Espace naturel dont l'action humaine est minimale : forêts, prairies, dunes, zones humides, ENAF, boisements préservés…"
+    },
+    {
+      "id": 37,
+      "categorie": "eau",
+      "libelle": "Masse d'eau",
+      "condition": "Bassin, réservoir",
+      "coef": 0.2,
+      "defaut": true,
+      "strates": null,
+      "description": "Surface en eau très artificialisée : fontaine, miroir d'eau, bassin incendie…"
+    },
+    {
+      "id": 38,
+      "categorie": "eau",
+      "libelle": "Masse d'eau",
+      "condition": "Milieu humide étanche",
+      "coef": 0.7,
+      "defaut": false,
+      "strates": null,
+      "description": "Surface en eau naturelle ou semi-naturelle, avec ou sans végétation, permanente ou non, caractérisée par un revêtement de fond ne permettant pas l'infiltration des eaux dans le sol (bâches, béton...) : mares, bassins de rétention, etc."
+    },
+    {
+      "id": 39,
+      "categorie": "eau",
+      "libelle": "Masse d'eau",
+      "condition": "Milieu humide non étanche",
+      "coef": 1.0,
+      "defaut": false,
+      "strates": null,
+      "description": "Surface en eau naturelle ou semi-naturelle, avec ou sans végétation, permanente ou non, permettant l'infiltration des eaux dans le sol : mares, noues de stockage, jardins de pluie…"
+    },
+    {
+      "id": 40,
+      "categorie": "eau",
+      "libelle": "Masse d'eau",
+      "condition": "Noue d'infiltration",
+      "coef": 0.7,
+      "defaut": false,
+      "strates": null,
+      "description": "Canaux souvent positionnés le long des voiries pour en collecter les eaux de ruissellement, souvent à sec"
+    },
+    {
+      "id": 41,
+      "categorie": "eau",
+      "libelle": "Masse d'eau",
+      "condition": "Fossé",
+      "coef": 0.8,
+      "defaut": false,
+      "strates": null,
+      "description": "Canaux souvent positionnés le long des voiries pour en collecter les eaux de ruissellement, souvent chargé en eau"
+    }
+  ]
+}

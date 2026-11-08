@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CBSh visuel · Capacité d’accueil biodiversité d’un projet</title>
+<meta name="description" content="Calcul du Coefficient de Biotope Surfacique harmonisé (CBSh) et comparaison de deux scénarios d’un même projet.">
+<meta name="theme-color" content="#588157">
+<link rel="icon" href="assets/logo/favicon.ico" sizes="any">
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="p-sedum" viewBox="-10 -13 20 24"><g fill="currentColor"><circle cx="-4" cy="3" r="3.4"/><circle cx="4" cy="3" r="3.4"/><circle cx="0" cy="-3" r="3.4"/></g></symbol>
+    <symbol id="p-herbacees" viewBox="-10 -13 20 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M0,8 Q-2,0 -5,-7"/><path d="M0,8 Q0,0 0,-7"/><path d="M0,8 Q2,0 5,-7"/></g></symbol>
+    <symbol id="p-arbustes" viewBox="-10 -13 20 24"><g fill="currentColor"><rect x="-1" y="2" width="2" height="6"/><ellipse cx="0" cy="0" rx="8" ry="6"/></g></symbol>
+    <symbol id="p-arbres" viewBox="-10 -13 20 24"><g fill="currentColor"><rect x="-1.2" y="-1" width="2.4" height="10"/><circle cx="0" cy="-5" r="6.5"/></g></symbol>
+  </defs>
+</svg>
+<div class="page">
+
+<header class="entete">
+  <h1 class="marque-h1"><a class="marque" href="#accueil">
+    <img src="assets/logo/logo.svg" alt="" width="62" height="62">
+    <span>
+      <span class="titre">Capacité d’accueil biodiversité d’un projet</span>
+      <span class="sous-titre">Calcul du Coefficient de Biotope Surfacique harmonisé</span>
+    </span>
+  </a></h1>
+  <div class="onglets" role="tablist" aria-label="Sections">
+    <button type="button" class="onglet" role="tab" id="onglet-accueil" aria-controls="panneau-accueil" aria-selected="true">Accueil</button>
+    <button type="button" class="onglet" role="tab" id="onglet-saisie" aria-controls="panneau-saisie" aria-selected="false" tabindex="-1">Saisie et détails</button>
+    <button type="button" class="onglet" role="tab" id="onglet-aide" aria-controls="panneau-aide" aria-selected="false" tabindex="-1">Aide</button>
+  </div>
+  <div class="actions">
+    <div class="menu-projet">
+      <button type="button" class="bouton-menu" id="bouton-projet" aria-expanded="false" aria-controls="menu-projet">
+        Projet
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="menu-panneau" id="menu-projet" hidden>
+        <p class="menu-etat" id="etat-sauvegarde" role="status">Vos saisies sont enregistrées dans ce navigateur dès la première modification.</p>
+        <button type="button" class="menu-item" data-projet="exporter-json">Exporter le projet (.json)</button>
+        <button type="button" class="menu-item" data-projet="importer">Importer un projet (.json)…</button>
+        <button type="button" class="menu-item menu-item--danger" data-projet="reinitialiser">Revenir à l’exemple</button>
+        <input type="file" id="fichier-projet" accept=".json,application/json" hidden>
+      </div>
+    </div>
+    <button type="button" class="bouton-export" id="bouton-csv" title="Télécharger le tableau en CSV (ouvert directement par Excel)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m-5-4 5 5 5-5M5 20h14"/></svg>
+      Exporter .csv
+    </button>
+  </div>
+</header>
+
+<main>
+
+<p id="erreur-donnees" class="erreur" role="alert" hidden></p>
+<p id="message-projet" class="message-projet" role="status" hidden></p>
+<noscript><p class="erreur">Cet outil nécessite JavaScript.</p></noscript>
+
+<!-- ====================== ACCUEIL ====================== -->
+<div id="panneau-accueil" class="panneau" role="tabpanel" aria-labelledby="onglet-accueil">
+
+  <div class="rangee-kpi">
+    <article class="carte carte--bascule kpi inactif" id="kpi-A" aria-label="Scénario A">
+      <button type="button" class="carte-bascule" data-scenario="A" aria-pressed="false" aria-label="Scénario A : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+      <div class="kpi-gauche">
+        <div class="scen-tete"><span class="lettre lettre-a lettre--l" aria-hidden="true">A</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
+        <div>
+          <p class="kpi-valeur"><span class="grand"></span><span class="unite">CBSh</span></p>
+          <p class="kpi-parcelle"></p>
+        </div>
+      </div>
+      <div class="kpi-droite">
+        <ul class="kpi-cats"></ul>
+        <p class="kpi-note">m² <span data-libelle="eco-amenageables"></span></p>
+      </div>
+    </article>
+    <article class="carte gain" aria-label="Gain de B par rapport à A">
+      <p class="gain-titre">Gain B / A</p>
+      <p class="gain-valeur" id="gain-valeur"></p>
+      <p class="gain-m2" id="gain-m2"></p>
+    </article>
+    <article class="carte carte--bascule kpi carte--actif" id="kpi-B" aria-label="Scénario B">
+      <button type="button" class="carte-bascule actif" data-scenario="B" aria-pressed="true" aria-label="Scénario B : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+      <div class="kpi-gauche">
+        <div class="scen-tete"><span class="lettre lettre-b lettre--l" aria-hidden="true">B</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
+        <div>
+          <p class="kpi-valeur"><span class="grand"></span><span class="unite">CBSh</span></p>
+          <p class="kpi-parcelle"></p>
+        </div>
+      </div>
+      <div class="kpi-droite">
+        <ul class="kpi-cats"></ul>
+        <p class="kpi-note">m² <span data-libelle="eco-amenageables"></span></p>
+      </div>
+    </article>
+  </div>
+
+  <section class="carte carte--actif plan" aria-labelledby="titre-plan">
+    <header class="plan-tete">
+      <div>
+        <h2 id="titre-plan" class="titre-carte">Plan de la parcelle</h2>
+        <p class="sous-carte">Isométrie à l'échelle · coupe du sol par type de surface</p>
+      </div>
+      <div class="affichage" role="group" aria-label="Affichage de l'axonométrie">
+        <span class="affichage-lib">Affichage :</span>
+        <button type="button" class="bouton-aff actif" aria-pressed="true" aria-disabled="true" title="Modes d'affichage : à venir">Illustration</button>
+        <button type="button" class="bouton-aff" aria-pressed="false" aria-disabled="true" tabindex="-1" title="Modes d'affichage : à venir">Catégorie</button>
+        <button type="button" class="bouton-aff" aria-pressed="false" aria-disabled="true" tabindex="-1" title="Modes d'affichage : à venir">Strates</button>
+        <button type="button" class="bouton-aff" aria-pressed="false" aria-disabled="true" tabindex="-1" title="Modes d'affichage : à venir">Coef.</button>
+      </div>
+      <div class="selecteur" role="group" aria-label="Scénario actif">
+  <button type="button" class="seg" aria-pressed="false" data-scenario="A"><span class="lettre lettre-a" aria-hidden="true">A</span><span data-nom-scenario="A">Variante « best »</span></button>
+  <button type="button" class="seg actif" aria-pressed="true" data-scenario="B"><span class="lettre lettre-b" aria-hidden="true">B</span><span data-nom-scenario="B">Projet de base</span></button>
+</div>
+    </header>
+
+    <div class="plan-wrap">
+      <div class="plan-stage">
+        <span class="filigrane" aria-hidden="true">B</span>
+        <img class="axo" src="assets/axo.svg" width="920" height="840" alt="Axonométrie du projet : un bâtiment en L avec toitures végétalisées, cour pavée, jardin, noue et parking.">
+        <svg class="zones" id="zones" viewBox="290 78 920 840" role="group" aria-label="Zones de l'illustration : cliquer pour saisir une surface"></svg>
+        <svg class="liens" id="liens" viewBox="0 0 1370 703" aria-hidden="true"></svg>
+        <div id="etiquettes" class="etiquettes"></div>
+      </div>
+    </div>
+    <p class="aide">Cliquer sur une zone de l'illustration ou sur une étiquette pour saisir ses surfaces · une étiquette par ligne du tableau</p>
+  </section>
+
+  <section class="carte mosaique" aria-labelledby="titre-mosaique">
+    <h2 id="titre-mosaique" class="titre-carte">De la surface à la valeur écologique</h2>
+    <p class="sous-carte">Largeur des blocs ∝ m². La barre « éco » = Σ surface × coef. : sa longueur rapportée à la parcelle est le CBSh.</p>
+    <div id="mosaique-lignes"></div>
+  </section>
+
+</div>
+
+<!-- ====================== SAISIE ET DÉTAILS ====================== -->
+<div id="panneau-saisie" class="panneau" role="tabpanel" aria-labelledby="onglet-saisie" hidden>
+
+  <div class="rangee-saisie">
+<article class="carte carte--bascule scen-saisie inactif" id="saisie-A" aria-label="Scénario A">
+      <button type="button" class="carte-bascule" data-scenario="A" aria-pressed="false" aria-label="Scénario A : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+      <div class="scen-tete"><span class="lettre lettre-a lettre--l" aria-hidden="true">A</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
+      <p class="kpi-valeur kpi-valeur--m"><span class="grand"></span></p>
+      <p class="kpi-detail"></p>
+      <p class="kpi-parcelle"></p>
+      <ul class="liste-cats"></ul>
+      <p class="controle" role="status"></p>
+    </article>
+    <section class="carte coupe" aria-labelledby="titre-coupe">
+      <header class="coupe-tete">
+        <div>
+          <h2 id="titre-coupe" class="titre-carte">Coupe de principe</h2>
+          <p class="sous-carte">Une tranche du projet · n° = ligne du tableau</p>
+        </div>
+        <div class="selecteur selecteur--court" role="group" aria-label="Scénario actif">
+  <button type="button" class="seg" aria-pressed="false" data-scenario="A"><span class="lettre lettre-a" aria-hidden="true">A</span><span data-nom-court="A">Variante « best »</span></button>
+  <button type="button" class="seg actif" aria-pressed="true" data-scenario="B"><span class="lettre lettre-b" aria-hidden="true">B</span><span data-nom-court="B">Projet de base</span></button>
+</div>
+      </header>
+      <div class="coupe-cadre">
+        <img src="assets/coupe_tranche.svg" width="1014" height="468" loading="lazy" alt="Coupe de principe du projet : bâtiments, sols et noue, avec les numéros des lignes du tableau.">
+      </div>
+    </section>
+<article class="carte carte--bascule scen-saisie carte--actif" id="saisie-B" aria-label="Scénario B">
+      <button type="button" class="carte-bascule actif" data-scenario="B" aria-pressed="true" aria-label="Scénario B : afficher et modifier ce scénario"><span class="carte-bascule-lib" aria-hidden="true">Voir ce scénario</span></button>
+      <div class="scen-tete"><span class="lettre lettre-b lettre--l" aria-hidden="true">B</span><div><h2 class="scen-nom"></h2><p class="scen-sous"></p></div></div>
+      <p class="kpi-valeur kpi-valeur--m"><span class="grand"></span></p>
+      <p class="kpi-detail"></p>
+      <p class="kpi-parcelle"></p>
+      <ul class="liste-cats"></ul>
+      <p class="controle" role="status"></p>
+    </article>
+  </div>
+
+  <section class="carte tableau-carte" aria-labelledby="titre-tableau">
+    <header class="tableau-tete">
+      <h2 id="titre-tableau" class="titre-carte">Occupation des sols</h2>
+      <button type="button" class="bouton-ajout">+ Ajouter une surface</button>
+      <div class="legende" aria-label="Légende des strates"><span class="leg"><svg class="picto" width="20" height="24" aria-hidden="true"><use href="#p-sedum"/></svg>Sédum</span><span class="leg"><svg class="picto" width="20" height="24" aria-hidden="true"><use href="#p-herbacees"/></svg>Herbacées</span><span class="leg"><svg class="picto" width="20" height="24" aria-hidden="true"><use href="#p-arbustes"/></svg>Arbustes</span><span class="leg"><svg class="picto" width="20" height="24" aria-hidden="true"><use href="#p-arbres"/></svg>Arbres</span></div>
+    </header>
+
+    <div class="tableau-defil">
+      <div class="tableau" id="tableau-saisie" data-actif="B" role="table" aria-label="Occupation des sols, scénarios A et B">
+        <div class="zone">
+          <div class="tete-groupes" aria-hidden="true">
+            <div class="groupe-a"><span class="puce">Scénario A</span><span class="ro"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="5.5" width="9" height="6" rx="1.2" fill="currentColor"/><path d="M3.5 5.5v-2a2.5 2.5 0 0 1 5 0v2"/></svg>lecture seule</span></div>
+            <div class="groupe-b"><span class="puce">Scénario B</span><span class="ro"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="5.5" width="9" height="6" rx="1.2" fill="currentColor"/><path d="M3.5 5.5v-2a2.5 2.5 0 0 1 5 0v2"/></svg>lecture seule</span></div>
+          </div>
+          <div class="tete-cols" role="row">
+            <div class="c-typo" role="columnheader">Typologie</div>
+            <div class="c-strates" role="columnheader">Strates</div>
+            <div class="c-coef" role="columnheader">Coef.</div>
+            <div class="c-a-m2" role="columnheader">m²</div>
+            <div class="c-a-eco" role="columnheader">m² éco</div>
+            <div class="c-sep" role="presentation"></div>
+            <div class="c-b-m2" role="columnheader">m²</div>
+            <div class="c-b-eco" role="columnheader">m² éco</div>
+            <div class="c-ecart" role="columnheader">Écart</div>
+            <div class="c-sup" role="presentation"></div>
+          </div>
+          <div class="corps" role="rowgroup">
+            <div id="tableau-corps" class="corps-lignes" role="presentation"></div>
+          </div>
+        </div>
+        <div class="total" role="row">
+          <div class="c-typo" role="cell">Total · CBSh = Σ (surface × coef.) / surface de la parcelle</div>
+          <div class="c-strates" role="presentation"></div><div class="c-coef" role="presentation"></div>
+          <div class="c-a-m2" role="cell" data-sortie="total-m2-A"></div><div class="c-a-eco" role="cell" data-sortie="total-eco-A"></div><div class="c-sep" role="presentation"></div>
+          <div class="c-b-m2" role="cell" data-sortie="total-m2-B"></div><div class="c-b-eco" role="cell" data-sortie="total-eco-B"></div>
+          <div class="c-ecart" role="cell" data-sortie="total-ecart"></div>
+        </div>
+        <div class="parcelle" role="row" id="ligne-parcelle">
+          <div class="c-typo" role="cell"><div><div class="nom">Surface de la parcelle</div><div class="cond">Dénominateur du CBSh · vide = Σ des surfaces ; à forcer si tout n'est pas compté</div></div></div>
+          <div class="c-strates" role="presentation"></div><div class="c-coef" role="presentation"></div>
+          <div class="c-a-m2" role="cell" data-cellule-parcelle="A"><span data-sortie="parcelle-A"></span></div><div class="c-a-eco" role="cell" data-sortie="parcelle-mode-A"></div><div class="c-sep" role="presentation"></div>
+          <div class="c-b-m2" role="cell" data-cellule-parcelle="B"><span data-sortie="parcelle-B"></span><input type="number" class="champ" id="champ-parcelle" min="0" step="any" inputmode="decimal" aria-label="Surface de la parcelle en m², scénario B (vide = somme des surfaces)"></div><div class="c-b-eco" role="cell" data-sortie="parcelle-mode-B"></div>
+          <div class="c-ecart" role="presentation"></div>
+        </div>
+        <div class="facade" role="row" id="ligne-facade">
+          <div class="c-typo" role="cell"><span class="info" aria-hidden="true">i</span><div><div class="nom">Façade végétalisée</div><div class="cond" data-facade="precision"></div></div></div>
+          <div class="c-strates" role="presentation"></div><div class="c-coef" role="presentation"></div>
+          <div class="c-a-m2" role="presentation"></div><div class="c-a-eco" role="presentation"></div><div class="c-sep" role="presentation"></div>
+          <div class="c-b-m2" role="cell" data-facade="surface"></div><div class="c-b-eco" role="cell"><span class="hors-cbsh">hors CBSh</span></div><div class="c-ecart" role="presentation"></div>
+        </div>
+        <div class="voile" aria-hidden="true"></div>
+        <div class="cadre-actif" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ====================== AIDE ====================== -->
+<div id="panneau-aide" class="panneau" role="tabpanel" aria-labelledby="onglet-aide" hidden>
+  <div class="aide-page">
+    <nav class="carte aide-sommaire" aria-label="Sommaire de l'aide">
+      <h2 class="titre-carte">Aide</h2>
+      <button type="button" class="aide-lien actif" data-aide-section="aide-definition">Qu'est-ce que le CBSh ?</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-calcul">Comment il se calcule</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-nomenclature">La nomenclature</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-regles">Règles de saisie</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-outil">Dans cet outil</button>
+      <button type="button" class="aide-lien" data-aide-section="aide-plus">Pour aller plus loin</button>
+    </nav>
+
+    <div class="aide-contenu">
+      <section class="carte aide-section" id="aide-definition" aria-labelledby="titre-aide-definition">
+        <h2 id="titre-aide-definition">Comprendre le CBSh</h2>
+        <p class="aide-sous-titre">Coefficient de Biotope Surfacique harmonisé</p>
+        <p>Le CBSh est un indicateur de biodiversité <em>in situ</em> retenu par le GT 7 Biodiversité dans le cadre de Cap 2030. Compris entre 0 et 1, il permet de comparer la capacité d’accueil de la biodiversité d’un site avant et après projet. Il prend en compte les surfaces végétalisées selon l’épaisseur de leur substrat et la combinaison de strates qu’elles portent.</p>
+        <p>Pourquoi « harmonisé » ? Le coefficient de biotope est simple, très diffusé et facile à valoriser, mais il en existe de nombreuses variantes, chacune répondant à des problématiques propres. Le CBSh cherche à faire consensus plutôt que de laisser cohabiter une dizaine de calculs différents.</p>
+      </section>
+
+      <section class="carte aide-section" id="aide-calcul" aria-labelledby="titre-aide-calcul">
+        <h2 id="titre-aide-calcul">Comment il se calcule</h2>
+        <p>Chaque surface est multipliée par le coefficient de sa typologie (de 0 à 1). On additionne le tout, puis on divise par la surface de la parcelle.</p>
+        <p class="aide-formule">CBSh = Σ (surface × coefficient) ÷ surface de la parcelle</p>
+        <ul class="aide-exemples" aria-label="Exemples de calcul">
+          <li>Pleine terre, 1 strate<b>100 m² × 0,7 = 70 m² éco</b></li>
+          <li>Toiture extensive sédum<b>200 m² × 0,1 = 20 m² éco</b></li>
+          <li>Enrobé<b>300 m² × 0 = 0 m² éco</b></li>
+        </ul>
+        <p>Par exemple, 410 m² « écologiques » sur une parcelle de 1 000 m² donnent un CBSh de 0,41. Les surfaces saisies sont des projections horizontales (sol et toitures) : les façades ne comptent pas, et leur somme doit être égale à la surface de la parcelle.</p>
+      </section>
+
+      <section class="carte aide-section" id="aide-nomenclature" aria-labelledby="titre-aide-nomenclature">
+        <h2 id="titre-aide-nomenclature">La nomenclature</h2>
+        <p>Les surfaces se classent en grandes familles : toitures, toitures végétalisées, voiries, espaces verts et masses d’eau. La nomenclature compte aujourd’hui 41 typologies, assez pour décrire la diversité des paysages urbains.</p>
+        <figure class="aide-figure">
+          <a href="assets/aide_cbsh_nomenclature.jpg" target="_blank" rel="noopener">
+            <img src="assets/aide_cbsh_nomenclature.jpg" width="1280" height="863" loading="lazy"
+                 alt="Les grandes familles du CBSh et leurs coefficients : toits 0 ; toitures végétalisées de 0,1 (extensive) à 0,7 (intensive) ; voiries de 0 (minéral) à 0,3 (mixte) ; espaces verts de 0,3 (sur dalle) à 1 (naturel) ; masses d’eau de 0,2 (bassin) à 1 (milieu humide).">
+          </a>
+          <figcaption>Familles de surfaces et fourchettes de coefficients. Cliquer pour agrandir.</figcaption>
+        </figure>
+      </section>
+
+      <section class="carte aide-section" id="aide-regles" aria-labelledby="titre-aide-regles">
+        <h2 id="titre-aide-regles">Quelques règles de saisie</h2>
+        <ol class="aide-regles">
+          <li><span class="aide-num" aria-hidden="true">1</span><span>Une strate <b>arbustive ou arborée</b> ne compte que si elle couvre <b>au moins 20 %</b> de la surface.</span></li>
+          <li><span class="aide-num" aria-hidden="true">2</span><span>La mention « <b>avec arbres</b> » demande plus de 2 arbres pour 100 m².</span></li>
+          <li><span class="aide-num" aria-hidden="true">3</span><span>La <b>pleine terre</b> exclut tout revêtement, même perméable, ainsi que toute dalle ou interface imperméable en profondeur.</span></li>
+          <li><span class="aide-num" aria-hidden="true">4</span><span>Si vous ne connaissez pas la typologie exacte, « <b>Je ne sais pas</b> » applique le coefficient par défaut de la catégorie.</span></li>
+        </ol>
+      </section>
+
+      <section class="carte aide-section" id="aide-outil" aria-labelledby="titre-aide-outil">
+        <h2 id="titre-aide-outil">Dans cet outil</h2>
+        <p>Vous comparez deux scénarios d’un même projet, A et B ; un clic sur le nom d’un scénario, dans sa carte, permet de le renommer. Cliquez sur une zone du plan ou sur une étiquette pour saisir ses surfaces, ou utilisez l’onglet « Saisie et détails » pour le tableau complet. Une ligne vide dans les deux scénarios peut y être supprimée (✕). Le gain entre A et B s’affiche en points de CBSh.</p>
+      </section>
+
+      <section class="carte aide-section aide-plus" id="aide-plus" aria-labelledby="titre-aide-plus">
+        <h2 id="titre-aide-plus">Pour aller plus loin</h2>
+        <p><a href="https://www.planbatimentdurable.developpement-durable.gouv.fr/IMG/pdf/cap2030_gt7-biodiversite_phase_1_vdiffusion.pdf" target="_blank" rel="noopener">Livrable de la phase 1 du GT 7 Biodiversité (novembre 2024)</a>, avec la présentation détaillée du CBSh, ses choix de construction et un tutoriel de l’outil officiel.</p>
+        <p class="aide-mention">Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, dans le cadre du projet Cap 2030 (version de septembre 2024).</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<dialog id="popup-zone" class="popup" aria-labelledby="popup-titre"></dialog>
+
+<footer class="pied">
+  <p>Le CBSh est un indicateur élaboré au sein du GT 7 – Biodiversité, piloté par le CSTB, dans le cadre du projet Cap 2030.</p>
+  <p>Plus d'informations : <a href="https://www.planbatimentdurable.developpement-durable.gouv.fr/gt-biodiversite-a1638.html" rel="noopener">GT 7 Biodiversité</a></p>
+  <p class="pied-version">CBSh visuel · version 0.8.16 · licence GPL-3.0 · <a href="https://github.com/alliages/cbsh_visuel" rel="noopener">code source</a> · les valeurs affichées sont des données d'exemple</p>
+</footer>
+
+</div>
+<script src="js/calcul.js"></script>
+<script src="js/projet_io.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

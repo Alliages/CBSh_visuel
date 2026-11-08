@@ -1,0 +1,196 @@
+{
+  "viewBox": "290 78 920 840",
+  "zones": [
+    {
+      "id": "pleine-terre",
+      "libelle": "Pleine terre (bande ouest)",
+      "type": "saisie",
+      "categorie": "ev",
+      "lignes": [
+        9,
+        10
+      ],
+      "ancre": [
+        528.6,
+        451.2
+      ],
+      "ancres": {
+        "9": [
+          353.2,
+          522.5
+        ],
+        "10": [
+          379.2,
+          507.5
+        ]
+      },
+      "chemin": "M652,335 L729.9,380 L405.2,567.5 L327.2,522.5 Z"
+    },
+    {
+      "id": "venelle-dalles",
+      "libelle": "Venelle dallée (non comptée dans le CBSh)",
+      "type": "inerte",
+      "chemin": "M729.9,380 L1171.6,635 L1158.6,642.5 L717,387.5 Z"
+    },
+    {
+      "id": "bande-est",
+      "libelle": "Bande plantée (est)",
+      "type": "saisie",
+      "categorie": "ev",
+      "lignes": [
+        8
+      ],
+      "ancre": [
+        1054.7,
+        672.5
+      ],
+      "chemin": "M1106.7,612.5 L1158.6,642.5 L1002.7,732.5 L950.8,702.5 Z"
+    },
+    {
+      "id": "stabilise",
+      "libelle": "Place stabilisée",
+      "type": "saisie",
+      "categorie": "voi",
+      "lignes": [
+        6
+      ],
+      "ancre": [
+        955.3,
+        723.9
+      ],
+      "chemin": "M940.4,696.5 L1002.7,732.5 L970.3,751.2 L907.9,715.2 Z"
+    },
+    {
+      "id": "enrobe",
+      "libelle": "Parking enrobé",
+      "type": "saisie",
+      "categorie": "voi",
+      "lignes": [
+        5
+      ],
+      "ancre": [
+        863.1,
+        760.6
+      ],
+      "chemin": "M879.3,698.8 L970.3,751.2 L846.9,822.5 L755.9,770 Z M911.8,680 L940.4,696.5 L907.9,715.2 L879.3,698.8 Z"
+    },
+    {
+      "id": "paves",
+      "libelle": "Cour pavée (joints enherbés)",
+      "type": "saisie",
+      "categorie": "voi",
+      "lignes": [
+        7
+      ],
+      "ancre": [
+        658.5,
+        646.2
+      ],
+      "chemin": "M717,567.5 L911.8,680 L872.8,702.5 L678,590 Z M678,590 L755.9,635 L639,702.5 L561.1,657.5 Z"
+    },
+    {
+      "id": "jardin-dalle",
+      "libelle": "Jardin sur dalle",
+      "type": "saisie",
+      "categorie": "ev",
+      "lignes": [
+        11
+      ],
+      "ancre": [
+        765.7,
+        696.9
+      ],
+      "chemin": "M755.9,635 L872.8,702.5 L775.4,758.8 L658.5,691.2 Z"
+    },
+    {
+      "id": "noue",
+      "libelle": "Masses d'eau (noue d'infiltration)",
+      "type": "saisie",
+      "categorie": "eau",
+      "lignes": [
+        12
+      ],
+      "ancre": [
+        707.2,
+        730.6
+      ],
+      "chemin": "M658.5,691.2 L775.4,758.8 L755.9,770 L639,702.5 Z"
+    },
+    {
+      "id": "toit-terrasse-plot",
+      "libelle": "Terrasse bois du plot",
+      "type": "info",
+      "info": {
+        "titre": "Terrasse bois du plot",
+        "texte": "Terrasse bois accessible : assimilée à une toiture classique (coefficient 0). Sa surface est comptée dans la ligne « Toiture classique »."
+      },
+      "chemin": "M561.1,291.5 L707.9,376.2 L673.4,396.1 L526.6,311.4 Z"
+    },
+    {
+      "id": "toit-butte-plot",
+      "libelle": "Toiture intensive haute du plot (butte)",
+      "type": "saisie",
+      "categorie": "bat",
+      "lignes": [
+        4
+      ],
+      "ancre": [
+        543.9,
+        386.2
+      ],
+      "chemin": "M526.6,311.4 L673.4,396.1 L561.1,461 L414.3,376.2 Z"
+    },
+    {
+      "id": "toit-bitume",
+      "libelle": "Toiture bitume de la barre",
+      "type": "saisie",
+      "categorie": "bat",
+      "lignes": [
+        1
+      ],
+      "ancre": [
+        974.5,
+        374.9
+      ],
+      "note": "Cette ligne regroupe aussi la terrasse bois du plot, assimilée à une toiture classique.",
+      "chemin": "M998.2,303.9 L1097.6,361.2 L950.8,446 L851.4,388.6 Z"
+    },
+    {
+      "id": "toit-extensive-barre",
+      "libelle": "Toiture extensive de la barre",
+      "type": "saisie",
+      "categorie": "bat",
+      "lignes": [
+        2,
+        3
+      ],
+      "ancre": [
+        814.7,
+        282.7
+      ],
+      "ancres": {
+        "2": [
+          628.6,
+          221.0
+        ]
+      },
+      "chemin": "M781.3,178.6 L994.9,302 L848.2,386.8 L634.5,263.4 Z"
+    },
+    {
+      "id": "pv-toiture",
+      "libelle": "Panneaux photovoltaïques",
+      "type": "info",
+      "info": {
+        "titre": "Végétalisation et photovoltaïque se cumulent",
+        "texte": "Une toiture peut porter à la fois des panneaux solaires et une végétation (toiture « biosolaire »). La fraîcheur apportée par la végétation peut améliorer le rendement des panneaux en été. La toiture gagne en même temps en biodiversité, en rétention d'eau de pluie et en confort d'été. Les panneaux n'ont pas de ligne propre : leur emprise est comptée dans la ligne de toiture végétalisée concernée (ici n° 2, sédum)."
+      },
+      "chemin": "M717,134.8 L777.4,169.6 L630.6,254.4 L570.2,219.5 Z"
+    },
+    {
+      "id": "facade-veg",
+      "libelle": "Façade végétalisée (hors CBSh)",
+      "type": "facade",
+      "chemin": "M1106.7,552.5 L1067.7,575 L1067.7,377 L1106.7,354.5 Z"
+    }
+  ]
+}
