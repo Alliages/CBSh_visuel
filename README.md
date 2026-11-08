@@ -2,7 +2,7 @@
 
 Outil web gratuit de calcul et de comparaison du **CBSh** (coefficient de biotope surfacique harmonisé) pour **deux scénarios d'un même projet** (par exemple « projet de base » et « variante best »).
 
-**▶ Utiliser l'outil : [https://alliages.github.io/cbsh_visuel/](https://alliages.github.io/cbsh_visuel/)**
+**▶ Utiliser l'outil : [https://alliages.github.io/CBSh_visuel/](https://alliages.github.io/CBSh_visuel/)**
 
 <p align="center">
   <img src="docs/capture_accueil.png" alt="Onglet Accueil : cartes de résultat des scénarios A et B, plan illustré de la parcelle avec étiquettes cliquables, mosaïque surface → valeur écologique" width="720">
