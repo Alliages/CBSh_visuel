@@ -4,7 +4,7 @@ Outil web de calcul et de comparaison du **CBSh** (coefficient de biotope surfac
 
 `CBSh = Σ (surface × coefficient) / surface de la parcelle` — surfaces en projection horizontale (sol + toitures), façades exclues.
 
-- Déploiement : https://alliages.github.io/cbsh_visuel/
+- Déploiement : [https://alliages.github.io/cbsh_visuel/](https://alliages.github.io/CBSh_visuel/)
 - Version : voir `VERSION` · historique : `CHANGELOG.md` · suite : `ROADMAP.md`
 - Licence : GPL-3.0 (`LICENSE`)
 
